@@ -2,20 +2,47 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RotaFácil SPX &amp; ML - Roteirizador e Organizador de Entregas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>RotaFácil SPX &amp; ML — Roteirizador e Organizador de Entregas</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      crossorigin=""
+    ></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
-
       body {
         font-family: 'Inter', sans-serif;
         background-color: #f1f5f9;
         color: #0f172a;
         overflow-x: hidden;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      input,
+      textarea,
+      select {
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
       }
 
       .no-scrollbar::-webkit-scrollbar {
@@ -27,46 +54,26 @@
       }
 
       #map {
-        width: 100%;
         height: 300px;
-        min-height: 270px;
-        z-index: 10;
-        background-color: #e2e8f0;
-        position: relative;
-        overflow: hidden;
+        width: 100%;
+        z-index: 1;
       }
 
       @media (min-width: 768px) {
         #map {
-          height: 370px;
+          height: 340px;
         }
       }
 
-      .active-pin-pulse {
-        width: 42px;
-        height: 42px;
-        border-radius: 9999px;
+      .custom-pin {
         display: flex;
         align-items: center;
         justify-content: center;
+        font-weight: 800;
         color: #ffffff;
-        font-weight: 900;
-        font-size: 14px;
-        border: 3px solid #ffffff;
-        box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.75);
-        animation: pulsePin 1.4s infinite;
-      }
-
-      @keyframes pulsePin {
-        0% {
-          box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.75);
-        }
-        70% {
-          box-shadow: 0 0 0 14px rgba(234, 88, 12, 0);
-        }
-        100% {
-          box-shadow: 0 0 0 0 rgba(234, 88, 12, 0);
-        }
+        border: 2.5px solid #ffffff;
+        box-shadow: 0 4px 10px rgba(15, 23, 42, 0.35);
+        transition: transform 0.15s ease;
       }
 
       @media print {
@@ -81,69 +88,40 @@
         }
       }
 
-      .side-signature-darca {
-        position: fixed;
-        right: 4px;
-        top: 50%;
-        transform: translateY(-50%) rotate(90deg);
-        transform-origin: right center;
-        font-size: 10px;
-        font-weight: 600;
+      .footer-signature-darca {
+        text-align: center;
+        font-size: 11px;
+        font-weight: 700;
         letter-spacing: 0.08em;
-        color: rgba(15, 23, 42, 0.42);
-        pointer-events: none;
+        color: #64748b;
+        padding: 10px 12px 14px;
         user-select: none;
-        z-index: 25;
-        line-height: 1;
-        white-space: nowrap;
       }
 
-      @media (max-width: 640px) {
-        body {
-          padding-right: 12px;
-        }
-      }
-
-      /* SIMULADOR DE TELA DE CELULAR NO DESKTOP */
       body.phone-sim-active {
-        background-color: #0f172a;
-        padding: 16px 12px 24px;
+        background-color: #090d16 !important;
+        padding: 16px 0;
         display: flex;
-        flex-direction: column;
         align-items: center;
+        justify-content: center;
       }
 
       body.phone-sim-active .phone-sim-frame {
-        width: 100%;
-        max-width: 412px;
-        min-height: 760px;
-        max-height: 90vh;
-        background-color: #f1f5f9;
+        width: 390px !important;
+        max-width: 390px !important;
+        min-height: 844px;
         border-radius: 36px;
         border: 8px solid #1e293b;
-        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
-        overflow-y: auto;
-        overflow-x: hidden;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
+        overflow: hidden;
+        background-color: #f8fafc;
         position: relative;
-        display: flex;
-        flex-direction: column;
-      }
-
-      body.phone-sim-active header {
-        position: sticky;
-        top: 0;
-        border-top-left-radius: 28px;
-        border-top-right-radius: 28px;
       }
 
       body.phone-sim-active main {
         grid-template-columns: minmax(0, 1fr) !important;
         gap: 12px;
         padding: 12px;
-      }
-
-      body.phone-sim-active .side-signature-darca {
-        display: none;
       }
 
       .phone-sim-notch {
@@ -157,1317 +135,1425 @@
         background: #0f172a;
         color: #cbd5e1;
         font-size: 11px;
-        font-weight: 700;
-        padding: 6px 18px;
-        border-top-left-radius: 26px;
-        border-top-right-radius: 26px;
-        position: sticky;
-        top: 0;
-        z-index: 40;
+        font-weight: 600;
+        padding: 6px 18px 4px;
+      }
+
+      body.phone-sim-active #map {
+        height: 220px !important;
       }
     </style>
   </head>
   <body class="min-h-screen flex flex-col">
-    <!-- ASSINATURA LATERAL DISCRETA -->
-    <div class="side-signature-darca" aria-hidden="true">by darca</div>
-
     <div id="phoneSimFrame" class="phone-sim-frame w-full flex-1 flex flex-col">
-      <!-- BARRA SUPERIOR DO SIMULADOR DE CELULAR -->
-      <div class="phone-sim-notch" aria-hidden="true">
+      <div class="phone-sim-notch">
         <span>9:41</span>
-        <span class="bg-slate-800 px-3 py-0.5 rounded-full text-[10px] text-slate-300">Modo Celular (412px)</span>
+        <span class="px-2 py-0.5 rounded-full bg-slate-800 text-[10px] text-slate-300">Modo Celular (390px)</span>
         <span>5G • 100%</span>
       </div>
 
-      <!-- CABEÇALHO PRINCIPAL -->
-      <header class="bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 text-white shadow-lg sticky top-0 z-30">
-        <div class="max-w-6xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3 flex flex-wrap items-center justify-between gap-2">
-          <div class="min-w-0 flex-1">
-            <h1 class="text-sm sm:text-lg font-black tracking-tight leading-none truncate">
-              RotaFácil <span class="text-amber-200">SPX &amp; ML</span>
-            </h1>
-            <p id="headerSubtitle" class="text-[11px] text-orange-100 mt-1 truncate">
-              Organizador de rotas, cores por bairro e etiquetas
-            </p>
+      <header class="bg-slate-900 text-white sticky top-0 z-30 shadow-md">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-9 h-9 rounded-xl bg-amber-400 text-slate-950 font-extrabold flex items-center justify-center shrink-0 text-sm shadow">
+              RF
+            </div>
+            <div class="truncate">
+              <div class="flex items-center gap-1.5">
+                <h1 class="font-extrabold text-sm sm:text-base tracking-tight truncate">RotaFácil SPX &amp; ML</h1>
+                <span class="hidden sm:inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-800 text-amber-300">PWA</span>
+              </div>
+              <p id="routeStatusSubtitle" class="text-[11px] text-slate-300 truncate">Carregando rota...</p>
+            </div>
           </div>
 
           <div class="flex items-center gap-1.5 shrink-0">
             <button
-              id="btnTogglePhoneSim"
-              onclick="togglePhoneSimulator()"
-              class="bg-slate-900/75 hover:bg-slate-900 text-amber-200 font-extrabold text-[11px] sm:text-xs px-2 sm:px-2.5 py-2 rounded-xl border border-white/25 transition flex items-center gap-1 active:scale-95 whitespace-nowrap"
-              title="Simular tela de celular"
+              id="installPwaBtn"
+              type="button"
+              onclick="installPwaApp()"
+              class="hidden items-center gap-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs px-2.5 py-1.5 rounded-lg transition cursor-pointer"
+              title="Instalar aplicativo"
             >
-              <span>📱</span>
-              <span id="phoneSimLabel" class="hidden sm:inline">Simular</span>
+              <span>⬇️</span>
+              <span class="hidden md:inline">Instalar</span>
             </button>
 
             <button
-              onclick="openStagingModal()"
-              class="bg-white/95 hover:bg-white text-orange-700 font-extrabold text-[11px] sm:text-xs px-2.5 sm:px-3 py-2 rounded-xl shadow transition flex items-center gap-1 active:scale-95 whitespace-nowrap"
+              id="phoneSimBtn"
+              type="button"
+              onclick="togglePhoneSimulator()"
+              class="flex items-center gap-1 bg-slate-800 hover:bg-slate-700 text-slate-100 font-semibold text-xs px-2.5 py-1.5 rounded-lg border border-slate-700 transition cursor-pointer"
+              title="Simular tela de celular (390px)"
+            >
+              <span>📱</span>
+              <span id="phoneSimBtnLabel" class="hidden sm:inline">Simular</span>
+            </button>
+
+            <button
+              type="button"
+              onclick="openBaseSeparationModal()"
+              class="flex items-center gap-1 bg-indigo-500 hover:bg-indigo-400 text-white font-bold text-xs px-2.5 py-1.5 rounded-lg transition cursor-pointer"
+              title="Separação na base e impressão de etiquetas"
             >
               <span>🏷️</span>
-              <span>Base &amp; Etiquetas</span>
+              <span class="hidden sm:inline">Etiquetas</span>
             </button>
 
             <label
-              class="bg-amber-300 hover:bg-amber-200 text-slate-950 font-extrabold text-[11px] sm:text-xs px-2.5 sm:px-3 py-2 rounded-xl shadow cursor-pointer transition flex items-center gap-1 active:scale-95 whitespace-nowrap"
+              class="flex items-center gap-1 bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs px-2.5 py-1.5 rounded-lg transition cursor-pointer"
+              title="Importar planilha (.xlsx, .xls, .csv)"
             >
               <span>📂</span>
-              <span>Planilha</span>
-              <input type="file" accept=".xlsx,.xls,.csv" class="hidden" onchange="handleFileUpload(event)" />
+              <span class="hidden sm:inline">Planilha</span>
+              <input
+                id="excelFileInput"
+                type="file"
+                accept=".xlsx,.xls,.csv"
+                class="hidden"
+                onchange="handleExcelUpload(event)"
+              />
             </label>
 
             <button
-              id="btnToggleVoice"
-              onclick="toggleVoice()"
-              class="bg-slate-900/75 hover:bg-slate-900 text-white font-extrabold text-[11px] sm:text-xs px-2.5 sm:px-3 py-2 rounded-xl border border-white/20 transition flex items-center gap-1 active:scale-95 whitespace-nowrap"
+              id="voiceToggleBtn"
+              type="button"
+              onclick="toggleVoiceGuide()"
+              class="flex items-center gap-1 bg-slate-800 hover:bg-slate-700 text-emerald-300 font-bold text-xs px-2.5 py-1.5 rounded-lg border border-slate-700 transition cursor-pointer"
+              title="Ativar ou desativar narração por voz"
             >
               <span id="voiceIcon">🔊</span>
-              <span id="voiceLabel">Voz ON</span>
+              <span id="voiceLabel" class="hidden md:inline">Voz</span>
             </button>
           </div>
         </div>
 
-        <!-- BARRA DE PROGRESSO E MODO DE ORDENAÇÃO -->
-        <div class="bg-slate-900/25 border-t border-white/15">
-          <div class="max-w-6xl mx-auto px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-2">
-            <div class="flex items-center gap-2 flex-1 min-w-[210px]">
-              <span id="progressText" class="text-[11px] font-bold text-white whitespace-nowrap">0 de 0 paradas</span>
-              <div class="w-full max-w-[200px] h-2 bg-black/25 rounded-full overflow-hidden">
-                <div id="progressBar" class="h-full bg-emerald-400 transition-all duration-300" style="width: 0%;"></div>
+        <div class="bg-slate-950/90 border-t border-slate-800">
+          <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div class="flex items-center gap-3 flex-wrap">
+              <div class="flex items-center gap-2">
+                <span class="text-slate-400 font-medium">Progresso:</span>
+                <span id="progressText" class="font-extrabold text-white">0/0 (0%)</span>
+                <div class="w-24 sm:w-32 h-2 bg-slate-800 rounded-full overflow-hidden">
+                  <div id="progressBarFill" class="h-full bg-emerald-400 transition-all duration-300" style="width: 0%"></div>
+                </div>
               </div>
-              <span id="pkgCountBadge" class="text-[11px] font-extrabold bg-black/20 px-2 py-0.5 rounded-full whitespace-nowrap">0 pacotes</span>
+
+              <div class="flex items-center gap-1.5 bg-slate-900 border border-slate-800 px-2 py-0.5 rounded-md">
+                <span class="text-amber-300 font-bold">⚡</span>
+                <span id="stopsPerHourText" class="font-bold text-white">0.0/h</span>
+              </div>
+
+              <div class="flex items-center gap-1.5 bg-slate-900 border border-slate-800 px-2 py-0.5 rounded-md">
+                <span class="text-sky-300 font-bold">📊 Média dia:</span>
+                <span id="dailyAvgText" class="font-bold text-sky-200">0.0/h</span>
+              </div>
             </div>
 
-            <div class="flex items-center gap-1.5">
-              <span class="text-[11px] font-bold text-orange-100 hidden sm:inline">Ordenar por:</span>
+            <div class="flex items-center gap-1.5 flex-wrap">
               <button
-                id="modeNeighborhood"
+                id="gpsBtn"
+                type="button"
+                onclick="toggleGpsTracking()"
+                class="flex items-center gap-1 px-2 py-1 rounded-md font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer"
+                title="Ativar GPS ao vivo"
+              >
+                <span>📍</span>
+                <span id="gpsBtnText">GPS</span>
+              </button>
+
+              <button
+                id="geigerBtn"
+                type="button"
+                onclick="toggleGeigerMode()"
+                class="flex items-center gap-1 px-2 py-1 rounded-md font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition cursor-pointer"
+                title="Geiger opcional (desligado por padrão)"
+              >
+                <span>☢️</span>
+                <span id="geigerBtnText">Geiger: OFF</span>
+              </button>
+
+              <button
+                id="sortNeighborhoodBtn"
+                type="button"
                 onclick="setSortMode('neighborhood')"
-                class="px-2.5 py-1.5 rounded-lg text-[11px] font-extrabold bg-white text-orange-700 shadow transition whitespace-nowrap"
+                class="px-2 py-1 rounded-md font-bold bg-amber-400 text-slate-950 transition cursor-pointer"
+                title="Ordenar por bairro"
               >
                 🎨 Bairro
               </button>
+
               <button
-                id="modeRoute"
-                onclick="setSortMode('route')"
-                class="px-2.5 py-1.5 rounded-lg text-[11px] font-extrabold text-white hover:bg-white/10 transition whitespace-nowrap"
+                id="sortSequenceBtn"
+                type="button"
+                onclick="setSortMode('sequence')"
+                class="px-2 py-1 rounded-md font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer"
+                title="Ordenar pela sequência original"
               >
                 🔢 Parada
+              </button>
+
+              <button
+                type="button"
+                onclick="reorderPendingFromCurrentLocation()"
+                class="px-2 py-1 rounded-md font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition cursor-pointer"
+                title="Reordenar paradas pendentes a partir da posição atual"
+              >
+                🧭 Reordenar daqui
+              </button>
+
+              <button
+                type="button"
+                onclick="resetDemoOrProgress()"
+                class="px-2 py-1 rounded-md font-semibold bg-slate-800 hover:bg-rose-950 text-rose-300 border border-slate-700 transition cursor-pointer"
+                title="Resetar progresso"
+              >
+                ↺ Reset
               </button>
             </div>
           </div>
 
-          <!-- FILTRO COLORIDO POR BAIRRO -->
-          <div id="neighborhoodChips" class="max-w-6xl mx-auto px-3 sm:px-4 pb-2.5 flex items-center gap-1.5 overflow-x-auto no-scrollbar"></div>
+          <div class="max-w-7xl mx-auto px-3 sm:px-6 pb-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar" id="neighborhoodFilterBar"></div>
         </div>
       </header>
 
-      <!-- CONTEÚDO PRINCIPAL -->
-      <main class="max-w-6xl w-full mx-auto px-3 sm:px-4 py-3 grid grid-cols-1 lg:grid-cols-12 gap-3.5 flex-1">
-        <!-- MAPA + PARADA ATUAL -->
-        <section class="lg:col-span-7 flex flex-col gap-3 min-w-0">
-          <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
-            <div class="px-3 py-2 bg-slate-900 text-white flex flex-wrap items-center justify-between gap-2">
-              <div class="flex items-center gap-2 text-xs font-extrabold">
+      <div id="feedbackBanner" class="hidden max-w-7xl w-full mx-auto px-3 sm:px-6 pt-3">
+        <div id="feedbackBannerInner" class="rounded-xl px-3.5 py-2.5 text-xs font-semibold flex items-center justify-between gap-2 shadow-sm"></div>
+      </div>
+
+      <main class="max-w-7xl w-full mx-auto px-3 sm:px-6 py-4 grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1">
+        <section class="lg:col-span-7 flex flex-col gap-4">
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2 text-xs font-bold text-slate-700">
                 <span>🗺️ Mapa da Rota</span>
-                <span id="gpsStatusBadge" class="text-[11px] font-bold text-slate-300">GPS: manual</span>
+                <span id="gpsDistanceBadge" class="hidden px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-extrabold"></span>
               </div>
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <button
-                  id="btnToggleGeiger"
-                  onclick="toggleGeiger()"
-                  class="bg-slate-700 hover:bg-slate-600 text-amber-200 font-extrabold text-[11px] px-2.5 py-1 rounded-lg transition whitespace-nowrap"
-                >
-                  ☢️ Geiger: OFF
-                </button>
-                <button
-                  id="btnToggleGps"
-                  onclick="toggleGpsTracking()"
-                  class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold text-[11px] px-2.5 py-1 rounded-lg transition whitespace-nowrap"
-                >
-                  📍 Meu GPS
-                </button>
-              </div>
+              <button
+                type="button"
+                onclick="centerMapOnActiveStop()"
+                class="text-xs font-bold text-blue-600 hover:text-blue-800 cursor-pointer"
+              >
+                Centralizar parada
+              </button>
             </div>
             <div id="map"></div>
           </div>
 
-          <div id="activeStopCard" class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden"></div>
+          <div id="activeStopCard" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5"></div>
         </section>
 
-        <!-- LISTA DE PARADAS -->
-        <section class="lg:col-span-5 bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden flex flex-col min-w-0">
-          <div class="p-3 border-b border-slate-200 bg-slate-50 flex flex-col gap-2">
-            <div class="flex items-center justify-between gap-2">
-              <span class="text-xs font-black text-slate-800 uppercase tracking-wide">📋 Paradas da Rota</span>
-              <span id="filteredCount" class="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-orange-100 text-orange-800">0 paradas</span>
+        <section class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
+          <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-2">
+            <div>
+              <h2 class="font-extrabold text-sm text-slate-800">Lista de Paradas</h2>
+              <p id="stopsCountSummary" class="text-[11px] text-slate-500">Toque em uma parada para focar no mapa</p>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <input
-                id="searchInput"
-                type="text"
-                oninput="renderAll(false)"
-                placeholder="Buscar rua, bairro ou final..."
-                class="sm:col-span-2 w-full px-3 py-1.5 text-xs border border-slate-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-orange-400"
-              />
-              <select
-                id="statusFilter"
-                onchange="renderAll(false)"
-                class="w-full px-2.5 py-1.5 text-xs font-bold border border-slate-300 rounded-xl bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-orange-400"
-              >
-                <option value="ALL">Todas</option>
-                <option value="PENDING">Pendentes</option>
-                <option value="MULTI">Múltiplos pcts</option>
-                <option value="DONE">Concluídas</option>
-              </select>
-            </div>
+            <span id="activeSortBadge" class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-900">
+              Ordenado: Bairro
+            </span>
           </div>
+
           <div id="stopsList" class="divide-y divide-slate-100 max-h-[540px] overflow-y-auto"></div>
         </section>
       </main>
+
+      <footer class="footer-signature-darca" aria-label="Assinatura do criador">
+        by darca
+      </footer>
     </div>
 
-    <!-- MODAL DE SEPARAÇÃO NA BASE E ETIQUETAS -->
-    <div id="stagingModal" class="fixed inset-0 bg-slate-950/65 hidden items-center justify-center p-3 sm:p-5 z-50">
-      <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
-        <div class="px-4 py-3 bg-gradient-to-r from-orange-600 to-amber-500 text-white flex items-center justify-between gap-2">
+    <div id="baseModal" class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+        <div class="px-5 py-3.5 bg-slate-900 text-white flex items-center justify-between gap-3">
           <div>
-            <h2 class="text-sm sm:text-base font-black">🏷️ Separação na Base (Caixas/Sacolas) &amp; Etiquetas</h2>
-            <p class="text-[11px] text-orange-100">Nomeie as caixas por bairro, confira os pacotes e imprima etiquetas para colar.</p>
+            <h3 class="font-extrabold text-base">🏷️ Separação na Base &amp; Etiquetas</h3>
+            <p class="text-xs text-slate-300">Organize caixas/sacolas por cor de bairro e imprima etiquetas de conferência</p>
           </div>
           <div class="flex items-center gap-2">
             <button
-              onclick="printPackageLabels()"
-              class="bg-amber-300 hover:bg-amber-200 text-slate-950 font-black text-xs px-3 py-2 rounded-xl shadow transition"
+              type="button"
+              onclick="window.print()"
+              class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs px-3 py-1.5 rounded-lg cursor-pointer"
             >
               🖨️ Imprimir Etiquetas
             </button>
             <button
-              onclick="closeStagingModal()"
-              class="bg-slate-900/60 hover:bg-slate-900 text-white font-black text-xs px-3 py-2 rounded-xl transition"
+              type="button"
+              onclick="closeBaseSeparationModal()"
+              class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg cursor-pointer"
             >
               ✕ Fechar
             </button>
           </div>
         </div>
-        <div id="stagingBoxesContainer" class="p-4 space-y-3 overflow-y-auto flex-1 bg-slate-50"></div>
+
+        <div id="baseModalContent" class="p-4 sm:p-5 overflow-y-auto space-y-4"></div>
       </div>
     </div>
 
-    <!-- ÁREA DE IMPRESSÃO DE ETIQUETAS -->
     <div id="printableLabelsArea" class="hidden"></div>
 
     <script>
-      const RAW_SAMPLE_DATA = [
-        {"seq":"-","stop":"-","tn":"BR269498893510L","addr":"Rua Louveira, 169","bairro":"Loteamento São Francisco","city":"Piracicaba","zip":"13423-484","lat":-22.7714,"lng":-47.587502},
-        {"seq":"-","stop":"-","tn":"BR2613173166615","addr":"Avenida Dois Córregos, 4205, BL G 1 AP 35","bairro":"Jardim Nova Iguaçu","city":"Piracicaba","zip":"13423-100","lat":-22.741047,"lng":-47.591393},
-        {"seq":"-","stop":"-","tn":"BR262469103742D","addr":"Rua Águas da Prata, 81, #N/A, Perdizes, Piracicaba, São Paulo, 13423580","bairro":"Perdizes","city":"Piracicaba","zip":"13423580","lat":-22.765245,"lng":-47.592938},
-        {"seq":"-","stop":"-","tn":"BR264749254426Y","addr":"Rua Águas da Prata, 81, #N/A, Perdizes, Piracicaba, São Paulo, 13423580","bairro":"Perdizes","city":"Piracicaba","zip":"13423580","lat":-22.765245,"lng":-47.592938},
-        {"seq":"-","stop":"-","tn":"BR263771661612O","addr":"Avenida Consuelo Sunega Gibelli, 71, Casa 1 bloco 9 (Taquaral 2)","bairro":"Cidade Judiciária","city":"Piracicaba","zip":"13423-790","lat":-22.780048,"lng":-47.586571},
-        {"seq":"-","stop":"-","tn":"BR2648118005325","addr":"Avenida Orlândia, 415, B-05","bairro":"São Francisco","city":"Piracicaba","zip":"13423-480","lat":-22.771055,"lng":-47.58894},
-        {"seq":"-","stop":"-","tn":"BR261465829788T","addr":"Rua Caetano José da Cunha, 87, Casa","bairro":"Garças","city":"Piracicaba","zip":"13423-638","lat":-22.7663,"lng":-47.587101},
-        {"seq":"-","stop":"-","tn":"BR269728195420I","addr":"Rua Águas da Prata, 81, #N/A, Perdizes, Piracicaba, São Paulo, 13423580","bairro":"Perdizes","city":"Piracicaba","zip":"13423580","lat":-22.765245,"lng":-47.592938},
-        {"seq":"-","stop":"-","tn":"BR261647629818T","addr":"Rua Águas de São Pedro, 212","bairro":"Perdizes","city":"Piracicaba","zip":"13423-584","lat":-22.766644,"lng":-47.592323},
-        {"seq":"-","stop":"-","tn":"BR261722922956T","addr":"Rua José Antonio de Oliveira, 94, Cond. Park Unimep Taquaral","bairro":"Taquaral","city":"Piracicaba","zip":"13421-758","lat":-22.786028,"lng":-47.593353},
-        {"seq":"-","stop":"-","tn":"BR265034505634G","addr":"Rua Águas da Prata, 81, #N/A, Perdizes, Piracicaba, São Paulo, 13423580","bairro":"Perdizes","city":"Piracicaba","zip":"13423580","lat":-22.765245,"lng":-47.592938},
-        {"seq":"-","stop":"-","tn":"BR263250207826B","addr":"Rua Águas da Prata, 81, #N/A, Perdizes, Piracicaba, São Paulo, 13423580","bairro":"Perdizes","city":"Piracicaba","zip":"13423580","lat":-22.765245,"lng":-47.592938},
-        {"seq":"-","stop":"-","tn":"BR260007090260C","addr":"Rua José Ferraz Pacheco, 355","bairro":"Santa Rita","city":"Piracicaba","zip":"13423-400","lat":-22.766301,"lng":-47.586256},
-        {"seq":"1","stop":"1","tn":"BR269396971386Z","addr":"Área Rural, 67, Pegar sentindo usina São Jose","bairro":"Área Rural de Rio das Pedras","city":"Rio das Pedras","zip":"13399-899","lat":-22.788261,"lng":-47.58093},
-        {"seq":"2","stop":"2","tn":"BR2662700951781","addr":"Avenida Consuelo Sunega Gibelli, 71, Reserva Taquaral 2 Casa 3 q9","bairro":"Cidade Judiciária","city":"Piracicaba","zip":"13423-790","lat":-22.780054,"lng":-47.586552},
-        {"seq":"3","stop":"2","tn":"BR2607106481285","addr":"Avenida Consuelo Sunega Gibelli, 71, Reserva Taquaral 2 Casa 3 q9","bairro":"Cidade Judiciária","city":"Piracicaba","zip":"13423-790","lat":-22.780054,"lng":-47.586552},
-        {"seq":"4","stop":"2","tn":"BR262339713278A","addr":"Avenida Consuelo Sunega Gibelli, 71, Reserva Taquaral 2 Casa 3 q9","bairro":"Cidade Judiciária","city":"Piracicaba","zip":"13423-790","lat":-22.780054,"lng":-47.586552},
-        {"seq":"5","stop":"2","tn":"BR265894710029B","addr":"Avenida Consuelo Sunega Gibelli, 71, Quadra 3 casa 8","bairro":"Cidade Judiciária","city":"Piracicaba","zip":"13423-790","lat":-22.780054,"lng":-47.586552},
-        {"seq":"6","stop":"2","tn":"BR2642799813468","addr":"Avenida Consuelo Sunega Gibelli, 71, Casa 16 quadra 2 Taquaral 2","bairro":"Cidade Judiciária","city":"Piracicaba","zip":"13423-790","lat":-22.780054,"lng":-47.586552},
-        {"seq":"7","stop":"2","tn":"BR2646655500177","addr":"Avenida Consuelo Sunega Gibelli, 71, Quadra 10 - casa 3","bairro":"Cidade Judiciária","city":"Piracicaba","zip":"13423-790","lat":-22.780054,"lng":-47.586552},
-        {"seq":"8","stop":"2","tn":"BR269031064993T","addr":"Avenida Consuelo Sunega Gibelli, 71, Quadra 9 casa 17","bairro":"Cidade Judiciária","city":"Piracicaba","zip":"13423-790","lat":-22.780054,"lng":-47.586552},
-        {"seq":"9","stop":"2","tn":"BR268802878534B","addr":"Avenida Consuelo Sunega Gibelli, 71, quadra 01 casa 11","bairro":"Cidade Judiciária","city":"Piracicaba","zip":"13423-790","lat":-22.780054,"lng":-47.586552},
-        {"seq":"10","stop":"3","tn":"BR268631450046E","addr":"Avenida Consuelo Sunega Gibelli, 71, Casa 21 quadra 08","bairro":"Cidade Judiciária","city":"Piracicaba","zip":"13423-790","lat":-22.780054,"lng":-47.586552},
-        {"seq":"11","stop":"4","tn":"BR267655724374U","addr":"Rua Monte Azul, 171","bairro":"Parque Taquaral","city":"Piracicaba","zip":"13423-500","lat":-22.7743,"lng":-47.590698},
-        {"seq":"12","stop":"5","tn":"BR266361856302U","addr":"Rua Monte Azul, 118, Ao ládo da casa rosa","bairro":"Parque Taquaral","city":"Piracicaba","zip":"13423-500","lat":-22.77388,"lng":-47.590488},
-        {"seq":"13","stop":"6","tn":"BR260110503480K","addr":"Rua Monte Azul, 75","bairro":"Parque Taquaral","city":"Piracicaba","zip":"13423-500","lat":-22.773569,"lng":-47.589981},
-        {"seq":"14","stop":"7","tn":"BR267912567188U","addr":"Rua Londrina, 100, Casa 54","bairro":"Parque Taquaral","city":"Piracicaba","zip":"13423-507","lat":-22.770901,"lng":-47.590698},
-        {"seq":"15","stop":"7","tn":"BR267809620230O","addr":"Rua Londrina, 100, Casa 09 condominio taquaral","bairro":"Parque Taquaral","city":"Piracicaba","zip":"13423-507","lat":-22.770901,"lng":-47.590698},
-        {"seq":"16","stop":"7","tn":"BR267810708668R","addr":"Rua Londrina, 100, Casa 5","bairro":"Parque Taquaral","city":"Piracicaba","zip":"13423-507","lat":-22.770901,"lng":-47.590698},
-        {"seq":"17","stop":"8","tn":"BR2697885964293","addr":"Rua Jacarezinho, 91","bairro":"Parque Taquaral","city":"Piracicaba","zip":"13423-508","lat":-22.770878,"lng":-47.592743},
-        {"seq":"18","stop":"8","tn":"BR2628859025543","addr":"Rua Jacarezinho, 62","bairro":"Parque Taquaral","city":"Piracicaba","zip":"13423-508","lat":-22.770878,"lng":-47.592743},
-        {"seq":"19","stop":"9","tn":"BR263227519775F","addr":"Rua Uberlândia, 109","bairro":"Parque Taquaral","city":"Piracicaba","zip":"13423-512","lat":-22.771854,"lng":-47.591915},
-        {"seq":"20","stop":"10","tn":"BR268258062379Y","addr":"Rua Uberaba, 61","bairro":"Parque Taquaral","city":"Piracicaba","zip":"13423-510","lat":-22.772671,"lng":-47.591812},
-        {"seq":"21","stop":"11","tn":"BR267335686435C","addr":"Rua Álvares Machado, 211","bairro":"CECAP","city":"Piracicaba","zip":"13421-640","lat":-22.775101,"lng":-47.593601},
-        {"seq":"22","stop":"12","tn":"BR264184752741M","addr":"Rua Afonso José Fioravante, 138","bairro":"CECAP","city":"Piracicaba","zip":"13421-632","lat":-22.77482,"lng":-47.593048},
-        {"seq":"23","stop":"13","tn":"BR268196150981J","addr":"Rua Afonso José Fioravante, 288","bairro":"CECAP","city":"Piracicaba","zip":"13421-632","lat":-22.774401,"lng":-47.594101},
-        {"seq":"24","stop":"14","tn":"BR2621627262211","addr":"Avenida Lourenço Filho, 167","bairro":"CECAP","city":"Piracicaba","zip":"13421-536","lat":-22.773701,"lng":-47.5942},
-        {"seq":"25","stop":"14","tn":"BR264500923862S","addr":"Avenida Lourenço Filho, 167","bairro":"CECAP","city":"Piracicaba","zip":"13421-536","lat":-22.773701,"lng":-47.5942},
-        {"seq":"26","stop":"15","tn":"BR262595387581X","addr":"Alameda Chrsysantho César, 60, Rua sem saída","bairro":"CECAP 1","city":"Piracicaba","zip":"13421-531","lat":-22.769539,"lng":-47.595276},
-        {"seq":"27","stop":"16","tn":"BR2606816161838","addr":"Alameda dos Povoadores, 50, Lanchonete","bairro":"CECAP","city":"Piracicaba","zip":"13421-532","lat":-22.769934,"lng":-47.594997},
-        {"seq":"28","stop":"16","tn":"BR269990900301M","addr":"Alameda dos Povoadores, 50, Lanchonete","bairro":"CECAP","city":"Piracicaba","zip":"13421-532","lat":-22.769934,"lng":-47.594997},
-        {"seq":"29","stop":"17","tn":"BR2681033117720","addr":"Alameda dos Povoadores, 102","bairro":"CECAP","city":"Piracicaba","zip":"13421-532","lat":-22.770023,"lng":-47.595577},
-        {"seq":"30","stop":"18","tn":"BR265408588156T","addr":"Alameda Lavínia Galesi Furlan Falzoni, 228, Casa","bairro":"CECAP","city":"Piracicaba","zip":"13421-534","lat":-22.7708,"lng":-47.595901},
-        {"seq":"31","stop":"19","tn":"BR2616167816264","addr":"Alameda Lavínia Galesi Furlan Falzoni, 226","bairro":"CECAP","city":"Piracicaba","zip":"13421-534","lat":-22.771069,"lng":-47.595978},
-        {"seq":"32","stop":"20","tn":"BR262338336745T","addr":"Alameda Newton Camargo Costa, 141","bairro":"CECAP","city":"Piracicaba","zip":"13421-533","lat":-22.77096,"lng":-47.595097},
-        {"seq":"33","stop":"20","tn":"BR268682047665N","addr":"Alameda Newton Camargo Costa, 141","bairro":"CECAP","city":"Piracicaba","zip":"13421-533","lat":-22.77096,"lng":-47.595097},
-        {"seq":"34","stop":"21","tn":"BR266200484683P","addr":"Rua Alfredo Marcondes, 87, Casa","bairro":"Eldorado 2","city":"Piracicaba","zip":"13421-634","lat":-22.773825,"lng":-47.592892},
-        {"seq":"35","stop":"22","tn":"BR2618473715695","addr":"Avenida Lourenço Filho, 130, Frente do supermercado Delta","bairro":"CECAP","city":"Piracicaba","zip":"13421-536","lat":-22.773542,"lng":-47.594298},
-        {"seq":"36","stop":"23","tn":"BR268308673286X","addr":"Avenida Lourenço Filho, 366","bairro":"CECAP","city":"Piracicaba","zip":"13421-536","lat":-22.77536,"lng":-47.595413},
-        {"seq":"37","stop":"24","tn":"BR267541944341S","addr":"Avenida Lourenço Filho, 399, casa 1","bairro":"CECAP","city":"Piracicaba","zip":"13421-536","lat":-22.7757,"lng":-47.595402},
-        {"seq":"38","stop":"25","tn":"BR267731108411R","addr":"Rua Bady Bassyt, 106, Casa","bairro":"CECAP","city":"Piracicaba","zip":"13421-700","lat":-22.776501,"lng":-47.594601},
-        {"seq":"39","stop":"26","tn":"BR263339454396I","addr":"Rua Arthur Nogueira, 139","bairro":"CECAP","city":"Piracicaba","zip":"13421-690","lat":-22.776312,"lng":-47.594372},
-        {"seq":"40","stop":"27","tn":"BR261339923325N","addr":"Avenida Romeu Ítalo Rípoli, 103","bairro":"CECAP","city":"Piracicaba","zip":"13421-570","lat":-22.776358,"lng":-47.593357},
-        {"seq":"41","stop":"28","tn":"BR261261207918X","addr":"R Aparecida do Oeste, 143","bairro":"CECAP","city":"Piracicaba","zip":"13421-650","lat":-22.775866,"lng":-47.593155},
-        {"seq":"42","stop":"29","tn":"BR264449294601S","addr":"Rua Carapicuíba, 312","bairro":"Loteamento São Francisco","city":"Piracicaba","zip":"13423-496","lat":-22.773954,"lng":-47.588493},
-        {"seq":"43","stop":"30","tn":"BR2694167967296","addr":"Rua Riolândia, 35","bairro":"Loteamento São Francisco","city":"Piracicaba","zip":"13423-494","lat":-22.773325,"lng":-47.588383},
-        {"seq":"44","stop":"31","tn":"BR263425865090G","addr":"Rua Terra Roxa, 205, Casa do lado da igresa batista","bairro":"Loteamento São Francisco","city":"Piracicaba","zip":"13423-492","lat":-22.772537,"lng":-47.588413},
-        {"seq":"45","stop":"32","tn":"BR261197308900V","addr":"Rua Ipuã, 357","bairro":"Loteamento São Francisco","city":"Piracicaba","zip":"13423-490","lat":-22.7742,"lng":-47.588001},
-        {"seq":"46","stop":"33","tn":"BR261330948781A","addr":"Rua Mairiporã, 149","bairro":"Loteamento São Francisco","city":"Piracicaba","zip":"13423-488","lat":-22.7726,"lng":-47.5863},
-        {"seq":"47","stop":"33","tn":"BR265623222618Y","addr":"Rua Mairiporã, 149","bairro":"Loteamento São Francisco","city":"Piracicaba","zip":"13423-488","lat":-22.7726,"lng":-47.5863},
-        {"seq":"48","stop":"34","tn":"BR2657815221972","addr":"Avenida José Álvares de Castro, 37, Próximo rotatória","bairro":"Santa Rita Das Garsa","city":"Piracicaba","zip":"13423-670","lat":-22.768803,"lng":-47.58596},
-        {"seq":"49","stop":"35","tn":"BR2621797699805","addr":"Rua João de Souza Aranha, 124","bairro":"Garças","city":"Piracicaba","zip":"13423-644","lat":-22.7666,"lng":-47.585701},
-        {"seq":"50","stop":"36","tn":"BR2655490855141","addr":"Avenida Elias de Almeida Prado, 131","bairro":"Garças","city":"Piracicaba","zip":"13423-650","lat":-22.767208,"lng":-47.585678},
-        {"seq":"51","stop":"37","tn":"BR269827607356A","addr":"Rua Joaquim Ferraz de Almeida, 211","bairro":"Garças","city":"Piracicaba","zip":"13423-640","lat":-22.767363,"lng":-47.586887},
-        {"seq":"52","stop":"38","tn":"BR2605602684156","addr":"Rua Joaquim Ferraz de Almeida, 181","bairro":"Garças","city":"Piracicaba","zip":"13423-640","lat":-22.767237,"lng":-47.587105},
-        {"seq":"53","stop":"38","tn":"BR261982963717R","addr":"Rua Joaquim Ferraz de Almeida, 181","bairro":"Santa Rita Garças","city":"Piracicaba","zip":"13423-640","lat":-22.767204,"lng":-47.58712},
-        {"seq":"54","stop":"39","tn":"BR2632875635601","addr":"Rua Caetano José da Cunha, 163, Ou pode ser no 164","bairro":"Garças","city":"Piracicaba","zip":"13423-638","lat":-22.766846,"lng":-47.586601},
-        {"seq":"55","stop":"39","tn":"BR266602479173W","addr":"Rua Caetano José da Cunha, 173","bairro":"Garças","city":"Piracicaba","zip":"13423-638","lat":-22.766701,"lng":-47.586399},
-        {"seq":"56","stop":"40","tn":"BR2631490243245","addr":"Rua Caetano José da Cunha, 93","bairro":"Garças","city":"Piracicaba","zip":"13423-638","lat":-22.766399,"lng":-47.587299},
-        {"seq":"57","stop":"41","tn":"BR266377274380N","addr":"Rua José Ferraz Pacheco, 280","bairro":"Santa Rita","city":"Piracicaba","zip":"13423-400","lat":-22.765992,"lng":-47.587644},
-        {"seq":"58","stop":"42","tn":"BR2677429211719","addr":"Rua Joaquim J da Silva, 94","bairro":"Garças","city":"Piracicaba","zip":"13423-632","lat":-22.765709,"lng":-47.588806},
-        {"seq":"59","stop":"43","tn":"BR268950815531Q","addr":"Rua Águas de Lindóia, 44, Vizinho casa 40 caso minha aus","bairro":"Perdizes","city":"Piracicaba","zip":"13423-582","lat":-22.764902,"lng":-47.591717},
-        {"seq":"60","stop":"44","tn":"BR260865526354Q","addr":"Rua Águas de Lindóia, 44, Casa","bairro":"Perdizes","city":"Piracicaba","zip":"13423-582","lat":-22.764902,"lng":-47.591717},
-        {"seq":"61","stop":"45","tn":"BR269929403677S","addr":"Rua Águas de São Pedro, 77, Casa","bairro":"Perdizes","city":"Piracicaba","zip":"13423-584","lat":-22.765703,"lng":-47.591503},
-        {"seq":"62","stop":"46","tn":"BR264418272951B","addr":"Rua Águas de São Pedro, 212","bairro":"Perdizes","city":"Piracicaba","zip":"13423-584","lat":-22.76663,"lng":-47.592327},
-        {"seq":"63","stop":"47","tn":"BR2607927542259","addr":"Rua Águas da Prata, 81, #N/A, Perdizes, Piracicaba, São Paulo, 13423580","bairro":"Perdizes","city":"Piracicaba","zip":"13423580","lat":-22.765245,"lng":-47.592938},
-        {"seq":"64","stop":"47","tn":"BR261326755609T","addr":"Rua Águas da Prata, 81, #N/A, Perdizes, Piracicaba, São Paulo, 13423580","bairro":"Perdizes","city":"Piracicaba","zip":"13423580","lat":-22.765245,"lng":-47.592938},
-        {"seq":"65","stop":"47","tn":"BR263438987988A","addr":"Rua Águas da Prata, 81, #N/A, Perdizes, Piracicaba, São Paulo, 13423580","bairro":"Perdizes","city":"Piracicaba","zip":"13423580","lat":-22.765245,"lng":-47.592938},
-        {"seq":"66","stop":"48","tn":"BR2667785940818","addr":"Rua Águas da Prata, 81, #N/A, Perdizes, Piracicaba, São Paulo, 13423580","bairro":"Perdizes","city":"Piracicaba","zip":"13423580","lat":-22.765245,"lng":-47.592938},
-        {"seq":"67","stop":"48","tn":"BR267289911317Z","addr":"Rua Águas da Prata, 81, #N/A, Perdizes, Piracicaba, São Paulo, 13423580","bairro":"Perdizes","city":"Piracicaba","zip":"13423580","lat":-22.765245,"lng":-47.592938},
-        {"seq":"68","stop":"49","tn":"BR267155204456U","addr":"Rua Uchôa, 300, CASA 07","bairro":"Loteamento São Francisco","city":"Piracicaba","zip":"13423-470","lat":-22.76716,"lng":-47.592174},
-        {"seq":"69","stop":"50","tn":"BR264840786644T","addr":"Rua Uchôa, 470, Casa 44","bairro":"Perdizes","city":"Piracicaba","zip":"13423-470","lat":-22.768299,"lng":-47.591},
-        {"seq":"70","stop":"50","tn":"BR260473794831E","addr":"Rua Uchôa, 470","bairro":"Jardim São Francisco","city":"Piracicaba","zip":"13423-470","lat":-22.768299,"lng":-47.591},
-        {"seq":"71","stop":"51","tn":"BR2659003819330","addr":"Rua Anhumas, 194","bairro":"Perdizes","city":"Piracicaba","zip":"13423-594","lat":-22.768364,"lng":-47.589733},
-        {"seq":"72","stop":"52","tn":"BR263016002714S","addr":"Rua Uchôa, 500, Condomínio bertolin 1 casa 19","bairro":"Loteamento São Francisco","city":"Piracicaba","zip":"13423-470","lat":-22.76878,"lng":-47.589878},
-        {"seq":"73","stop":"53","tn":"BR2605500891954","addr":"Rua Uchôa, 500, Casa 98","bairro":"Loteamento São Francisco","city":"Piracicaba","zip":"13423-470","lat":-22.76878,"lng":-47.589878},
-        {"seq":"74","stop":"53","tn":"BR261446948629K","addr":"Rua Uchôa, 500, Casa 100","bairro":"Loteamento São Francisco","city":"Piracicaba","zip":"13423-470","lat":-22.76878,"lng":-47.589878},
-        {"seq":"75","stop":"54","tn":"BR265045119086W","addr":"Rua Itapura, 345, Casa","bairro":"Loteamento São Francisco","city":"Piracicaba","zip":"13423-482","lat":-22.769665,"lng":-47.586864},
-        {"seq":"76","stop":"55","tn":"BR2677470353089","addr":"Av Elias de Almeida Prado, 50","bairro":"Garças","city":"Piracicaba","zip":"13423-650","lat":-22.767727,"lng":-47.585846},
-        {"seq":"77","stop":"56","tn":"BR263411724737L","addr":"Rua José Leme de Oliveira, 152","bairro":"Garças","city":"Piracicaba","zip":"13423-662","lat":-22.76729,"lng":-47.584633},
-        {"seq":"78","stop":"56","tn":"BR2699628082694","addr":"Rua José Leme de Oliveira, 152","bairro":"Garças","city":"Piracicaba","zip":"13423-662","lat":-22.76729,"lng":-47.584633},
-        {"seq":"79","stop":"57","tn":"BR262180727961Q","addr":"Rua José Leme de Oliveira, 55, Proxi ao super. São Francisco","bairro":"Garças","city":"Piracicaba","zip":"13423-662","lat":-22.76804,"lng":-47.585354},
-        {"seq":"80","stop":"58","tn":"BR261479782988T","addr":"Rua joaquim ferraz de almeida, 279, Casa","bairro":"Perdizes","city":"Piracicaba","zip":"13420-640","lat":-22.768002,"lng":-47.586723},
-        {"seq":"81","stop":"59","tn":"BR261038260076C","addr":"Avenida Taubaté, 509","bairro":"Perdizes","city":"Piracicaba","zip":"13423-570","lat":-22.767239,"lng":-47.588066},
-        {"seq":"82","stop":"60","tn":"BR261141110941Z","addr":"Rua Amparo, 105","bairro":"Perdizes","city":"Piracicaba","zip":"13423-590","lat":-22.767063,"lng":-47.590172},
-        {"seq":"83","stop":"60","tn":"BR268689706573Z","addr":"Rua Amparo, 105","bairro":"Perdizes","city":"Piracicaba","zip":"13423-590","lat":-22.767063,"lng":-47.590172},
-        {"seq":"84","stop":"61","tn":"BR261101593994R","addr":"Rua Amparo, 208, Casa","bairro":"Perdizes","city":"Piracicaba","zip":"13423-590","lat":-22.767588,"lng":-47.590717},
-        {"seq":"85","stop":"62","tn":"BR2613615452667","addr":"Rua Anhumas, 95","bairro":"Perdizes","city":"Piracicaba","zip":"13423-594","lat":-22.767695,"lng":-47.589104},
-        {"seq":"86","stop":"62","tn":"BR2698985426001","addr":"Rua Anhumas, 91","bairro":"Perdizes","city":"Piracicaba","zip":"13423-594","lat":-22.767656,"lng":-47.589096},
-        {"seq":"87","stop":"63","tn":"BR264045126675W","addr":"Rua Araçoiaba da Serra, 181","bairro":"Perdizes","city":"Piracicaba","zip":"13423-596","lat":-22.768581,"lng":-47.58913},
-        {"seq":"88","stop":"64","tn":"BR2657597963362","addr":"Rua Araçoiaba da Serra, 212","bairro":"Perdizes","city":"Piracicaba","zip":"13423-596","lat":-22.768782,"lng":-47.589256},
-        {"seq":"89","stop":"65","tn":"BR262079996418V","addr":"Avenida Orlândia, 723, Lotérica","bairro":"Loteamento São Francisco","city":"Piracicaba","zip":"13423-480","lat":-22.769169,"lng":-47.587288},
-        {"seq":"90","stop":"66","tn":"BR263553147341D","addr":"Avenida Orlândia, 681","bairro":"Loteamento São Francisco","city":"Piracicaba","zip":"13423-480","lat":-22.769564,"lng":-47.587673},
-        {"seq":"91","stop":"67","tn":"BR2673027407515","addr":"Rua Uchôa, 1056","bairro":"Loteamento São Francisco","city":"Piracicaba","zip":"13423-470","lat":-22.771604,"lng":-47.586079},
-        {"seq":"92","stop":"68","tn":"BR2614253136013","addr":"Avenida Consuelo Sunega Gibelli, 155, Quadra 8 casa 63","bairro":"Cidade Judiciária","city":"Piracicaba","zip":"13423-790","lat":-22.779484,"lng":-47.585518},
-        {"seq":"93","stop":"68","tn":"BR262045328588T","addr":"Avenida Consuelo Sunega Gibelli, 155, Quadra 3 Casa 45","bairro":"Cidade Judiciária","city":"Piracicaba","zip":"13423-790","lat":-22.779484,"lng":-47.585518},
-        {"seq":"94","stop":"68","tn":"BR264009928674F","addr":"Avenida Consuelo Sunega Gibelli, 155, Quadra 10 casa 16","bairro":"Cidade Judiciária","city":"Piracicaba","zip":"13423-790","lat":-22.779484,"lng":-47.585518},
-        {"seq":"95","stop":"68","tn":"BR262135000041E","addr":"Avenida Consuelo Sunega Gibelli, 155, Quadra 8 casa 34","bairro":"Cidade Judiciária","city":"Piracicaba","zip":"13423-790","lat":-22.779484,"lng":-47.585518},
-        {"seq":"96","stop":"68","tn":"BR2611669747070","addr":"Avenida Consuelo Sunega Gibelli, 155, Casa 37 Quadra 07","bairro":"Cidade Judiciária","city":"Piracicaba","zip":"13423-790","lat":-22.779484,"lng":-47.585518},
-        {"seq":"97","stop":"68","tn":"BR2674900234995","addr":"Avenida Consuelo Sunega Gibelli, 155, Casa 23 Quadra 4","bairro":"Cidade Judiciária","city":"Piracicaba","zip":"13423-790","lat":-22.779484,"lng":-47.585518},
-        {"seq":"98","stop":"68","tn":"BR260320845041I","addr":"Avenida Consuelo Sunega Gibelli, 155, Quadra 07 Casa 02","bairro":"Cidade Judiciária","city":"Piracicaba","zip":"13423-790","lat":-22.779484,"lng":-47.585518},
-        {"seq":"99","stop":"68","tn":"BR263211408692U","addr":"Avenida Consuelo Sunega Gibelli, 155, Casa","bairro":"Cidade Judiciária","city":"Piracicaba","zip":"13423-790","lat":-22.779484,"lng":-47.585518},
-        {"seq":"100","stop":"68","tn":"BR2641796622737","addr":"Avenida Consuelo Sunega Gibelli, 155, Condomínio RESERVA TAQUARAL 1","bairro":"Cidade Judiciária","city":"Piracicaba","zip":"13423-790","lat":-22.779484,"lng":-47.585518},
-        {"seq":"101","stop":"69","tn":"BR269328329981W","addr":"Avenida Consuelo Sunega Gibelli, 155, Condominio Quadra 8 Cs 25","bairro":"Cidade Judiciária","city":"Piracicaba","zip":"13423-790","lat":-22.779484,"lng":-47.585518},
-        {"seq":"102","stop":"69","tn":"BR265875738772V","addr":"Avenida Consuelo Sunega Gibelli, 155, Quadra 8 casa 37","bairro":"Cidade Judiciária","city":"Piracicaba","zip":"13423-790","lat":-22.779484,"lng":-47.585518},
-        {"seq":"103","stop":"70","tn":"BR268546074504V","addr":"Rua Orlando Guidetti, 172, Resid.Parque UNIMEP Taquaral","bairro":"Taquaral","city":"Piracicaba","zip":"13421-761","lat":-22.785978,"lng":-47.593353},
-        {"seq":"104","stop":"70","tn":"BR264407561898Y","addr":"Rua Raul Dantas Darce, 100, Res. Park Taquaral Unimep","bairro":"Taquaral","city":"Piracicaba","zip":"13421-760","lat":-22.786018,"lng":-47.593327},
-        {"seq":"105","stop":"70","tn":"BR266340317092Z","addr":"Rua Enrico Colantonio, 32, Atrás Faculdade UNIMEP","bairro":"Taquaral","city":"Piracicaba","zip":"13421-766","lat":-22.785955,"lng":-47.593269},
-        {"seq":"106","stop":"70","tn":"BR261965430464G","addr":"Rua Ivone Ferraz de Toledo Zunini, 38, Condominio Park Unimep Taquara","bairro":"Taquaral","city":"Piracicaba","zip":"13421-772","lat":-22.786015,"lng":-47.593327}
-      ];
-
       const NEIGHBORHOOD_PALETTE = [
-        { name: 'Vermelho', hex: '#ef4444', bg: '#fef2f2', border: '#fca5a5', text: '#991b1b', box: 'Caixa Vermelha' },
-        { name: 'Azul', hex: '#2563eb', bg: '#eff6ff', border: '#93c5fd', text: '#1e40af', box: 'Caixa Azul' },
-        { name: 'Esmeralda', hex: '#059669', bg: '#ecfdf5', border: '#6ee7b7', text: '#065f46', box: 'Caixa Verde' },
-        { name: 'Roxo', hex: '#7c3aed', bg: '#f5f3ff', border: '#c4b5fd', text: '#5b21b6', box: 'Caixa Roxa' },
-        { name: 'Âmbar', hex: '#d97706', bg: '#fffbeb', border: '#fcd34d', text: '#92400e', box: 'Caixa Amarela' },
-        { name: 'Rosa', hex: '#db2777', bg: '#fdf2f8', border: '#f9a8d4', text: '#9d174d', box: 'Sacola Rosa' },
-        { name: 'Ciano', hex: '#0891b2', bg: '#ecfeff', border: '#67e8f9', text: '#155e75', box: 'Sacola Ciano' },
-        { name: 'Laranja', hex: '#ea580c', bg: '#fff7ed', border: '#fdba74', text: '#9a3412', box: 'Caixa Laranja' },
-        { name: 'Índigo', hex: '#4f46e5', bg: '#eef2ff', border: '#a5b4fc', text: '#3730a3', box: 'Sacola Índigo' },
-        { name: 'Lima', hex: '#65a30d', bg: '#f7fee7', border: '#bef264', text: '#3f6212', box: 'Sacola Lima' }
+        { name: ' Âmbar', hex: '#d97706', bg: '#fef3c7', text: '#78350f', border: '#f59e0b' },
+        { name: 'Azul', hex: '#2563eb', bg: '#dbeafe', text: '#1e3a8a', border: '#3b82f6' },
+        { name: 'Esmeralda', hex: '#059669', bg: '#d1fae5', text: '#064e3b', border: '#10b981' },
+        { name: 'Roxo', hex: '#7c3aed', bg: '#ede9fe', text: '#4c1d95', border: '#8b5cf6' },
+        { name: 'Rosa', hex: '#db2777', bg: '#fce7f3', text: '#831843', border: '#ec4899' },
+        { name: 'Ciano', hex: '#0891b2', bg: '#cffafe', text: '#164e63', border: '#06b6d4' },
+        { name: 'Laranja', hex: '#ea580c', bg: '#ffedd5', text: '#7c2d12', border: '#f97316' },
+        { name: 'Ardósia', hex: '#475569', bg: '#e2e8f0', text: '#0f172a', border: '#64748b' }
       ];
 
-      const appState = {
+      const RAW_SAMPLE_DATA = [
+        { seq: 1, code: 'SPX884120941BR', recipient: 'Mariana Souza', address: 'Rua do Vergueiro, 420', neighborhood: 'Vila Mariana', city: 'São Paulo', lat: -23.5748, lng: -46.6392 },
+        { seq: 2, code: 'SPX884120942BR', recipient: 'Mariana Souza', address: 'Rua do Vergueiro, 420', neighborhood: 'Vila Mariana', city: 'São Paulo', lat: -23.5748, lng: -46.6392 },
+        { seq: 3, code: 'ML4092817712', recipient: 'Carlos Eduardo', address: 'Rua Domingos de Morais, 1180', neighborhood: 'Vila Mariana', city: 'São Paulo', lat: -23.5812, lng: -46.6375 },
+        { seq: 4, code: 'SPX884120988BR', recipient: 'Fernanda Lima', address: 'Rua Girassol, 310', neighborhood: 'Vila Madalena', city: 'São Paulo', lat: -23.5518, lng: -46.6889 },
+        { seq: 5, code: 'ML4092817904', recipient: 'Rafael Mendes', address: 'Rua Harmonia, 790', neighborhood: 'Vila Madalena', city: 'São Paulo', lat: -23.5546, lng: -46.6851 },
+        { seq: 6, code: 'SPX884121015BR', recipient: 'Patrícia Rocha', address: 'Av. Pompéia, 1540', neighborhood: 'Perdizes', city: 'São Paulo', lat: -23.5335, lng: -46.6844 },
+        { seq: 7, code: 'SPX884121016BR', recipient: 'Patrícia Rocha', address: 'Av. Pompéia, 1540', neighborhood: 'Perdizes', city: 'São Paulo', lat: -23.5335, lng: -46.6844 },
+        { seq: 8, code: 'ML4092818320', recipient: 'Lucas Almeida', address: 'Rua Cardoso de Almeida, 890', neighborhood: 'Perdizes', city: 'São Paulo', lat: -23.5378, lng: -46.6729 },
+        { seq: 9, code: 'SPX884121090BR', recipient: 'Juliana Costa', address: 'Rua da Mooca, 2110', neighborhood: 'Mooca', city: 'São Paulo', lat: -23.5512, lng: -46.5987 },
+        { seq: 10, code: 'ML4092818745', recipient: 'Bruno Carvalho', address: 'Rua Taquari, 645', neighborhood: 'Mooca', city: 'São Paulo', lat: -23.5469, lng: -46.6054 }
+      ];
+
+      let appState = {
         rawPackages: [],
         stops: [],
-        activeStopIndex: 0,
-        sortMode: 'neighborhood',
+        activeStopId: null,
         selectedNeighborhood: 'ALL',
+        sortMode: 'neighborhood',
         voiceEnabled: true,
         geigerEnabled: false,
-        followGps: false,
+        gpsWatching: false,
         gpsWatchId: null,
-        lastAnnouncedStopKey: null,
-        stagedPackageKeys: {},
-        customBoxLabels: {}
+        userLocation: null,
+        deliveredStopIds: [],
+        deliveredTimestamps: {},
+        routeStartTime: Date.now(),
+        boxLabels: {},
+        checkedPackages: {},
+        phoneSimActive: false,
+        deferredInstallPrompt: null,
+        lastAnnouncedStopId: null,
+        lastGeigerBeepAt: 0,
+        lastContinuousAlarmAt: 0
       };
 
-      let map = null;
+      let mapInstance = null;
       let markersLayer = null;
-      let routePolyline = null;
-      let driverMarker = null;
-      let geigerAudioCtx = null;
-      let geigerPulseTimer = null;
-      let geigerContinuousOsc = null;
-      let geigerContinuousGain = null;
-      let geigerContinuousTimeout = null;
-      let geigerArrivalAnnouncedKey = null;
+      let userMarker = null;
+      let audioCtx = null;
+
+      function escapeHtml(value) {
+        return String(value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function showBanner(message, type = 'info') {
+        const banner = document.getElementById('feedbackBanner');
+        const inner = document.getElementById('feedbackBannerInner');
+        if (!banner || !inner) return;
+
+        const styles = {
+          info: 'bg-sky-50 text-sky-900 border border-sky-200',
+          success: 'bg-emerald-50 text-emerald-900 border border-emerald-200',
+          warning: 'bg-amber-50 text-amber-950 border border-amber-300',
+          error: 'bg-rose-50 text-rose-900 border border-rose-200'
+        };
+
+        inner.className = `rounded-xl px-3.5 py-2.5 text-xs font-semibold flex items-center justify-between gap-2 shadow-sm ${styles[type] || styles.info}`;
+        inner.innerHTML = `<span>${escapeHtml(message)}</span><button type="button" onclick="hideBanner()" class="text-xs font-extrabold opacity-70 hover:opacity-100 cursor-pointer">✕</button>`;
+        banner.classList.remove('hidden');
+      }
+
+      function hideBanner() {
+        const banner = document.getElementById('feedbackBanner');
+        if (banner) banner.classList.add('hidden');
+      }
 
       function normalizeText(str) {
         return String(str || '')
+          .trim()
+          .toLowerCase()
           .normalize('NFD')
           .replace(/[\u0300-\u036f]/g, '')
-          .toLowerCase()
-          .trim();
+          .replace(/\s+/g, ' ');
       }
 
-      function cleanAddress(rawAddr) {
-        return String(rawAddr || '')
-          .split(',')
-          .map((part) => part.trim())
-          .filter((part) => part && normalizeText(part) !== '#n/a' && part !== '-')
-          .join(', ');
-      }
-
-      function extractRecipientName(pkg) {
-        const candidates = [
-          pkg.recipient, pkg.Recipient, pkg.receiver, pkg.Receiver,
-          pkg.buyer, pkg.Buyer, pkg.customer, pkg.Customer,
-          pkg.name, pkg.Name, pkg['Nome do Comprador'], pkg['Destinatário'], pkg['Recipient Name']
-        ];
-        for (const c of candidates) {
-          if (c && String(c).trim() && normalizeText(c) !== '#n/a' && normalizeText(c) !== '-') {
-            return String(c).trim();
-          }
-        }
-        return '';
-      }
-
-      function haversineMeters(lat1, lon1, lat2, lon2) {
-        if ([lat1, lon1, lat2, lon2].some((v) => typeof v !== 'number' || Number.isNaN(v))) return Infinity;
-        const R = 6371000;
-        const toRad = (deg) => (deg * Math.PI) / 180;
-        const dLat = toRad(lat2 - lat1);
-        const dLon = toRad(lon2 - lon1);
-        const a =
-          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-          Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      }
-
-      function getNeighborhoodStyle(bairro) {
-        const key = normalizeText(bairro) || 'sem-bairro';
+      function getNeighborhoodColor(neighborhood) {
+        const key = normalizeText(neighborhood || 'Sem Bairro');
         let hash = 0;
         for (let i = 0; i < key.length; i++) {
           hash = (hash * 31 + key.charCodeAt(i)) >>> 0;
         }
-        const palette = NEIGHBORHOOD_PALETTE[hash % NEIGHBORHOOD_PALETTE.length];
-        return {
-          ...palette,
-          boxLabel: appState.customBoxLabels[key] || `${palette.box} • ${bairro || 'Sem Bairro'}`
-        };
+        return NEIGHBORHOOD_PALETTE[hash % NEIGHBORHOOD_PALETTE.length];
       }
 
-      function processRawPackages(rawList) {
-        const cleaned = rawList
-          .map((item, idx) => {
-            const lat = Number(item.lat ?? item.Latitude ?? item.latitude);
-            const lng = Number(item.lng ?? item.Longitude ?? item.longitude);
-            const rawStop = item.stop ?? item.Stop ?? item.seq ?? item.Sequence ?? '-';
-            const parsedStop = Number(String(rawStop).replace(/[^\d.-]/g, ''));
-            const stopNum = Number.isFinite(parsedStop) && parsedStop > 0 ? parsedStop : null;
-            return {
-              id: idx,
-              tn: String(item.tn ?? item['SPX TN'] ?? item.tracking ?? `PKG-${idx + 1}`).trim(),
-              addr: cleanAddress(item.addr ?? item['Destination Address'] ?? item.address ?? ''),
-              bairro: String(item.bairro ?? item.Bairro ?? 'Sem Bairro').trim() || 'Sem Bairro',
-              city: String(item.city ?? item.City ?? '').trim(),
-              zip: String(item.zip ?? item['Zipcode/Postal code'] ?? item.cep ?? '').trim(),
-              recipient: extractRecipientName(item),
-              lat: Number.isFinite(lat) ? lat : null,
-              lng: Number.isFinite(lng) ? lng : null,
-              stopNum,
-              done: !!item.__done
-            };
-          })
-          .filter((p) => p.addr || (p.lat !== null && p.lng !== null));
+      function haversineMeters(lat1, lng1, lat2, lng2) {
+        if ([lat1, lng1, lat2, lng2].some((v) => typeof v !== 'number' || Number.isNaN(v))) {
+          return null;
+        }
+        const R = 6371000;
+        const toRad = (deg) => (deg * Math.PI) / 180;
+        const dLat = toRad(lat2 - lat1);
+        const dLng = toRad(lng2 - lng1);
+        const a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+      }
 
-        const withStop = cleaned.filter((p) => p.stopNum !== null);
-        const withoutStop = cleaned.filter((p) => p.stopNum === null);
-        const maxStop = withStop.reduce((m, p) => Math.max(m, p.stopNum), 0);
+      function buildStopsFromPackages(packages) {
+        const groupsMap = new Map();
 
-        withoutStop.forEach((pkg, i) => {
-          if (pkg.lat !== null && pkg.lng !== null && withStop.length > 0) {
-            let best = withStop[0];
-            let bestDist = Infinity;
-            for (const ref of withStop) {
-              if (ref.lat !== null && ref.lng !== null) {
-                const d = haversineMeters(pkg.lat, pkg.lng, ref.lat, ref.lng);
-                if (d < bestDist) {
-                  bestDist = d;
-                  best = ref;
-                }
-              }
-            }
-            pkg.stopNum = best.stopNum + 0.1 * ((i % 9) + 1);
-          } else {
-            pkg.stopNum = maxStop + i + 1;
-          }
-        });
+        packages.forEach((pkg, idx) => {
+          const seq = Number(pkg.seq) || idx + 1;
+          const address = String(pkg.address || 'Endereço não informado').trim();
+          const neighborhood = String(pkg.neighborhood || 'Sem Bairro').trim();
+          const city = String(pkg.city || '').trim();
+          const recipient = String(pkg.recipient || '').trim();
+          const code = String(pkg.code || `PCT-${seq}`).trim();
+          const lat = typeof pkg.lat === 'number' && !Number.isNaN(pkg.lat) ? pkg.lat : null;
+          const lng = typeof pkg.lng === 'number' && !Number.isNaN(pkg.lng) ? pkg.lng : null;
 
-        const groupMap = new Map();
-        cleaned.forEach((pkg) => {
-          const groupKey = `${normalizeText(pkg.addr)}|${normalizeText(pkg.bairro)}`;
-          if (!groupMap.has(groupKey)) {
-            groupMap.set(groupKey, {
-              key: groupKey,
-              addr: pkg.addr,
-              bairro: pkg.bairro,
-              city: pkg.city,
-              zip: pkg.zip,
-              lat: pkg.lat,
-              lng: pkg.lng,
-              minStop: pkg.stopNum,
-              packages: [],
-              recipients: [],
-              completed: pkg.done
+          const groupKey = `${normalizeText(address)}|${normalizeText(neighborhood)}`;
+          if (!groupsMap.has(groupKey)) {
+            groupsMap.set(groupKey, {
+              id: `stop-${groupsMap.size + 1}-${normalizeText(address).slice(0, 12).replace(/[^a-z0-9]/g, '')}`,
+              stopNumber: groupsMap.size + 1,
+              minSeq: seq,
+              address,
+              neighborhood,
+              city,
+              recipient,
+              lat,
+              lng,
+              color: getNeighborhoodColor(neighborhood),
+              packages: []
             });
           }
-          const grp = groupMap.get(groupKey);
-          grp.packages.push(pkg);
-          if (pkg.done) grp.completed = true;
-          if (pkg.stopNum < grp.minStop) grp.minStop = pkg.stopNum;
-          if (pkg.lat !== null && grp.lat === null) grp.lat = pkg.lat;
-          if (pkg.lng !== null && grp.lng === null) grp.lng = pkg.lng;
-          if (pkg.recipient && !grp.recipients.includes(pkg.recipient)) {
-            grp.recipients.push(pkg.recipient);
-          }
+
+          const stop = groupsMap.get(groupKey);
+          if (seq < stop.minSeq) stop.minSeq = seq;
+          if (!stop.recipient && recipient) stop.recipient = recipient;
+          if (stop.lat === null && lat !== null) stop.lat = lat;
+          if (stop.lng === null && lng !== null) stop.lng = lng;
+
+          stop.packages.push({
+            uid: `${code}-${idx}`,
+            code,
+            recipient: recipient || stop.recipient || 'Destinatário',
+            seq
+          });
         });
 
-        const groups = Array.from(groupMap.values());
-        if (appState.sortMode === 'neighborhood') {
-          groups.sort((a, b) => {
-            const bCmp = normalizeText(a.bairro).localeCompare(normalizeText(b.bairro), 'pt-BR');
-            if (bCmp !== 0) return bCmp;
-            if (a.minStop !== b.minStop) return a.minStop - b.minStop;
-            return a.addr.localeCompare(b.addr, 'pt-BR');
-          });
+        let stopsList = Array.from(groupsMap.values());
+
+        if (appState.sortMode === 'sequence') {
+          stopsList.sort((a, b) => a.minSeq - b.minSeq);
         } else {
-          groups.sort((a, b) => {
-            if (a.minStop !== b.minStop) return a.minStop - b.minStop;
-            return normalizeText(a.bairro).localeCompare(normalizeText(b.bairro), 'pt-BR');
+          stopsList.sort((a, b) => {
+            const nCmp = a.neighborhood.localeCompare(b.neighborhood, 'pt-BR');
+            if (nCmp !== 0) return nCmp;
+            return a.minSeq - b.minSeq;
           });
         }
 
-        return groups.map((g, idx) => ({
-          ...g,
-          displayOrder: idx + 1,
-          style: getNeighborhoodStyle(g.bairro)
+        stopsList = stopsList.map((stop, index) => ({
+          ...stop,
+          stopNumber: index + 1
         }));
+
+        return stopsList;
       }
 
-      function getFilteredStops() {
-        const search = normalizeText(document.getElementById('searchInput')?.value || '');
-        const statusFilter = document.getElementById('statusFilter')?.value || 'ALL';
-
-        return appState.stops.filter((stop) => {
-          if (appState.selectedNeighborhood !== 'ALL' && normalizeText(stop.bairro) !== appState.selectedNeighborhood) {
-            return false;
-          }
-          if (statusFilter === 'PENDING' && stop.completed) return false;
-          if (statusFilter === 'DONE' && !stop.completed) return false;
-          if (statusFilter === 'MULTI' && stop.packages.length < 2) return false;
-
-          if (search) {
-            const hay = normalizeText([
-              `parada ${stop.displayOrder}`,
-              stop.displayOrder,
-              stop.addr,
-              stop.bairro,
-              stop.city,
-              stop.zip,
-              stop.recipients.join(' '),
-              stop.packages.map((p) => `${p.tn} ${p.tn.slice(-4)}`).join(' ')
-            ].join(' '));
-            if (!hay.includes(search)) return false;
-          }
-          return true;
-        });
-      }
-
-      function initMap() {
-        if (!document.getElementById('map') || typeof L === 'undefined') return;
-        if (!map) {
-          map = L.map('map', { zoomControl: true }).setView([-22.7715, -47.5895], 14);
-          const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; OpenStreetMap'
-          });
-          const esri = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-            maxZoom: 19,
-            attribution: 'Esri'
-          });
-          osm.addTo(map);
-          osm.on('tileerror', () => {
-            if (!map.hasLayer(esri)) esri.addTo(map);
-          });
-          markersLayer = L.layerGroup().addTo(map);
-          routePolyline = L.polyline([], { color: '#475569', weight: 3, dashArray: '6, 8', opacity: 0.75 }).addTo(map);
-        }
-        setTimeout(() => {
-          try { map.invalidateSize(); } catch (_) {}
-        }, 120);
-      }
-
-      function renderMapMarkers(filteredStops, activeStop) {
-        if (!map || !markersLayer || typeof L === 'undefined') return;
-        markersLayer.clearLayers();
-        const coords = [];
-
-        filteredStops.forEach((stop) => {
-          if (stop.lat === null || stop.lng === null) return;
-          const isCurrent = activeStop && activeStop.key === stop.key;
-          const pos = [stop.lat, stop.lng];
-          coords.push(pos);
-
-          const icon = L.divIcon({
-            className: '',
-            html: isCurrent
-              ? `<div class="active-pin-pulse" style="background:${stop.style.hex};"><span>${stop.displayOrder}</span></div>`
-              : `<div style="background:${stop.completed ? '#94a3b8' : stop.style.hex};color:#fff;width:26px;height:26px;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);opacity:${stop.completed ? '0.65' : '1'};">${stop.displayOrder}</div>`,
-            iconSize: isCurrent ? [42, 42] : [26, 26],
-            iconAnchor: isCurrent ? [21, 21] : [13, 13]
-          });
-
-          const marker = L.marker(pos, { icon, zIndexOffset: isCurrent ? 1000 : stop.completed ? 0 : 200 }).addTo(markersLayer);
-          marker.bindTooltip(`Parada #${stop.displayOrder} • ${stop.bairro} (${stop.packages.length} pct)`);
-          marker.on('click', () => {
-            const realIdx = appState.stops.findIndex((s) => s.key === stop.key);
-            if (realIdx !== -1) {
-              appState.activeStopIndex = realIdx;
-              renderAll(true);
-            }
-          });
-        });
-
-        if (routePolyline) routePolyline.setLatLngs(coords);
-
-        if (activeStop && activeStop.lat !== null && activeStop.lng !== null) {
-          map.setView([activeStop.lat, activeStop.lng], Math.max(map.getZoom(), 15), { animate: true });
-        } else if (coords.length > 0) {
-          map.fitBounds(coords, { padding: [24, 24] });
-        }
-      }
-
-      function renderActiveStopCard(activeStop) {
-        const container = document.getElementById('activeStopCard');
-        if (!container) return;
-
-        if (!activeStop) {
-          container.innerHTML = `<div class="p-4 text-center text-sm font-bold text-emerald-700">Todas as paradas deste filtro foram concluídas!</div>`;
+      function reorderPendingFromCurrentLocation() {
+        const pending = appState.stops.filter((s) => !appState.deliveredStopIds.includes(s.id));
+        if (pending.length <= 1) {
+          showBanner('Não há paradas pendentes suficientes para reordenar.', 'info');
           return;
         }
 
-        const pkgBadges = activeStop.packages
-          .map((p) => {
-            const last4 = p.tn.slice(-4);
-            return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-300 text-xs font-mono font-bold text-slate-800">
-              <span>${p.tn.slice(0, -4)}</span><span class="bg-amber-300 text-slate-950 px-1 rounded font-black">${last4}</span>
-            </span>`;
-          })
-          .join(' ');
+        const activeStop = appState.stops.find((s) => s.id === appState.activeStopId) || pending[0];
+        let refLat = appState.userLocation ? appState.userLocation.lat : activeStop.lat;
+        let refLng = appState.userLocation ? appState.userLocation.lng : activeStop.lng;
 
-        const recipientHtml = activeStop.recipients.length
-          ? `<div class="mt-2 px-3 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 text-xs font-extrabold text-indigo-900">👤 Nome: ${activeStop.recipients.join(', ')}</div>`
-          : '';
-
-        const gmapsUrl = activeStop.lat !== null && activeStop.lng !== null
-          ? `https://www.google.com/maps/dir/?api=1&destination=${activeStop.lat},${activeStop.lng}`
-          : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(activeStop.addr + ', ' + activeStop.city)}`;
-
-        const wazeUrl = activeStop.lat !== null && activeStop.lng !== null
-          ? `https://waze.com/ul?ll=${activeStop.lat},${activeStop.lng}&navigate=yes`
-          : `https://waze.com/ul?q=${encodeURIComponent(activeStop.addr + ', ' + activeStop.city)}&navigate=yes`;
-
-        container.innerHTML = `
-          <div class="p-3.5 sm:p-4" style="border-left: 8px solid ${activeStop.style.hex};">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="px-2.5 py-1 rounded-lg text-xs font-black text-white" style="background:${activeStop.style.hex};">
-                  PARADA #${activeStop.displayOrder}
-                </span>
-                <span class="px-2.5 py-1 rounded-lg text-xs font-extrabold" style="background:${activeStop.style.bg};color:${activeStop.style.text};border:1px solid ${activeStop.style.border};">
-                  ${activeStop.bairro}
-                </span>
-                <span class="px-2.5 py-1 rounded-lg text-xs font-black bg-slate-900 text-amber-300">
-                  📦 ${activeStop.packages.length} ${activeStop.packages.length === 1 ? 'PACOTE' : 'PACOTES'}
-                </span>
-              </div>
-              <span class="text-[11px] font-bold text-slate-500">${activeStop.style.boxLabel}</span>
-            </div>
-
-            <h2 class="text-base sm:text-lg font-black text-slate-900 mt-2.5 leading-snug">${activeStop.addr}</h2>
-            <p class="text-xs text-slate-500 font-semibold">${[activeStop.city, activeStop.zip].filter(Boolean).join(' • ')}</p>
-            ${recipientHtml}
-
-            <div class="mt-3">
-              <div class="text-[11px] font-bold text-slate-500 uppercase mb-1">Códigos / Final para localizar na caixa:</div>
-              <div class="flex flex-wrap gap-1.5">${pkgBadges}</div>
-            </div>
-
-            <div class="mt-3.5 grid grid-cols-2 sm:grid-cols-4 gap-2">
-              <a href="${gmapsUrl}" target="_blank" rel="noopener" class="bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs py-2.5 px-3 rounded-xl text-center shadow transition">
-                🗺️ Google Maps
-              </a>
-              <a href="${wazeUrl}" target="_blank" rel="noopener" class="bg-sky-500 hover:bg-sky-600 text-white font-extrabold text-xs py-2.5 px-3 rounded-xl text-center shadow transition">
-                🚗 Waze
-              </a>
-              <button onclick="announceCurrentStop(true)" class="bg-slate-800 hover:bg-slate-900 text-white font-extrabold text-xs py-2.5 px-3 rounded-xl shadow transition">
-                🔊 Falar Agora
-              </button>
-              <button onclick="completeAndAdvance()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs py-2.5 px-3 rounded-xl shadow transition">
-                ✅ Entregue
-              </button>
-            </div>
-          </div>
-        `;
-      }
-
-      function renderStopsList(filteredStops, activeStop) {
-        const listEl = document.getElementById('stopsList');
-        const countEl = document.getElementById('filteredCount');
-        if (!listEl) return;
-        if (countEl) countEl.textContent = `${filteredStops.length} paradas`;
-
-        if (!filteredStops.length) {
-          listEl.innerHTML = `<div class="p-6 text-center text-xs font-bold text-slate-500">Nenhuma parada encontrada com esse filtro.</div>`;
-          return;
-        }
-
-        listEl.innerHTML = filteredStops
-          .map((stop) => {
-            const realIdx = appState.stops.findIndex((s) => s.key === stop.key);
-            const isCurrent = activeStop && activeStop.key === stop.key;
-            const last4List = stop.packages.map((p) => p.tn.slice(-4)).join(', ');
-
-            return `
-              <div
-                onclick="selectStopByIndex(${realIdx})"
-                class="p-3 cursor-pointer transition hover:bg-slate-50 ${isCurrent ? 'bg-amber-50/70' : ''} ${stop.completed ? 'opacity-60' : ''}"
-                style="border-left: 6px solid ${stop.completed ? '#94a3b8' : stop.style.hex};"
-              >
-                <div class="flex items-center justify-between gap-2">
-                  <div class="flex items-center gap-2 min-w-0">
-                    <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black text-white shrink-0" style="background:${stop.completed ? '#64748b' : stop.style.hex};">
-                      ${stop.displayOrder}
-                    </span>
-                    <span class="text-xs font-extrabold truncate" style="color:${stop.style.text};">${stop.bairro}</span>
-                  </div>
-                  <span class="text-[11px] font-black px-2 py-0.5 rounded-full bg-slate-100 text-slate-800 shrink-0">
-                    ${stop.packages.length} pct
-                  </span>
-                </div>
-                <div class="text-xs font-bold text-slate-800 mt-1.5 leading-snug">${stop.addr}</div>
-                <div class="flex items-center justify-between gap-2 mt-1 text-[11px] text-slate-500">
-                  <span class="font-mono truncate">Final: <strong class="text-slate-700">${last4List}</strong></span>
-                  <span class="font-bold shrink-0">${stop.completed ? '✅ Feita' : isCurrent ? '📍 Na vez' : 'Pendente'}</span>
-                </div>
-              </div>
-            `;
-          })
-          .join('');
-      }
-
-      function renderNeighborhoodChips() {
-        const chipsEl = document.getElementById('neighborhoodChips');
-        if (!chipsEl) return;
-
-        const uniqueBairros = [];
-        const seen = new Set();
-        appState.stops.forEach((s) => {
-          const k = normalizeText(s.bairro);
-          if (!seen.has(k)) {
-            seen.add(k);
-            uniqueBairros.push({ key: k, label: s.bairro, style: s.style });
+        if (typeof refLat !== 'number' || typeof refLng !== 'number') {
+          appState.sortMode = 'sequence';
+          appState.stops = buildStopsFromPackages(appState.rawPackages);
+          if (!appState.activeStopId || appState.deliveredStopIds.includes(appState.activeStopId)) {
+            const firstPending = appState.stops.find((s) => !appState.deliveredStopIds.includes(s.id));
+            appState.activeStopId = firstPending ? firstPending.id : appState.stops[0]?.id || null;
           }
-        });
-
-        const allBtn = `
-          <button
-            onclick="selectNeighborhood('ALL')"
-            class="px-2.5 py-1 rounded-full text-[11px] font-extrabold transition whitespace-nowrap shrink-0 ${
-              appState.selectedNeighborhood === 'ALL'
-                ? 'bg-slate-900 text-white shadow'
-                : 'bg-white/90 text-slate-800 hover:bg-white'
-            }"
-          >
-            Todos (${uniqueBairros.length})
-          </button>
-        `;
-
-        const bairroBtns = uniqueBairros
-          .map((b) => {
-            const active = appState.selectedNeighborhood === b.key;
-            return `
-              <button
-                onclick="selectNeighborhood('${b.key.replace(/'/g, "\\'")}')"
-                class="px-2.5 py-1 rounded-full text-[11px] font-extrabold transition whitespace-nowrap shrink-0 flex items-center gap-1.5 ${
-                  active ? 'ring-2 ring-white scale-[1.02]' : 'opacity-90 hover:opacity-100'
-                }"
-                style="background:${b.style.hex};color:#fff;"
-              >
-                <span class="w-2 h-2 rounded-full bg-white/80"></span>
-                <span>${b.label}</span>
-              </button>
-            `;
-          })
-          .join('');
-
-        chipsEl.innerHTML = allBtn + bairroBtns;
-      }
-
-      function renderProgress() {
-        const totalStops = appState.stops.length;
-        const doneStops = appState.stops.filter((s) => s.completed).length;
-        const totalPkgs = appState.stops.reduce((sum, s) => sum + s.packages.length, 0);
-        const pct = totalStops > 0 ? Math.round((doneStops / totalStops) * 100) : 0;
-
-        const subEl = document.getElementById('headerSubtitle');
-        const progEl = document.getElementById('progressText');
-        const pkgEl = document.getElementById('pkgCountBadge');
-        const barEl = document.getElementById('progressBar');
-
-        if (subEl) subEl.textContent = `${totalStops} paradas • ${totalPkgs} pacotes organizados`;
-        if (progEl) progEl.textContent = `${doneStops} de ${totalStops} paradas concluídas (${pct}%)`;
-        if (pkgEl) pkgEl.textContent = `${totalPkgs} pacotes`;
-        if (barEl) barEl.style.width = `${pct}%`;
-      }
-
-      function renderAll(shouldAnnounce = false) {
-        appState.stops = processRawPackages(appState.rawPackages);
-        if (appState.activeStopIndex >= appState.stops.length) {
-          appState.activeStopIndex = 0;
-        }
-
-        const filteredStops = getFilteredStops();
-        const activeStop = appState.stops[appState.activeStopIndex] || filteredStops[0] || null;
-
-        renderProgress();
-        renderNeighborhoodChips();
-        renderActiveStopCard(activeStop);
-        renderStopsList(filteredStops, activeStop);
-        renderMapMarkers(filteredStops, activeStop);
-
-        if (shouldAnnounce) {
-          announceCurrentStop(true);
-        }
-      }
-
-      function selectStopByIndex(idx) {
-        if (idx >= 0 && idx < appState.stops.length) {
-          appState.activeStopIndex = idx;
-          geigerArrivalAnnouncedKey = null;
           renderAll(true);
+          showBanner('Sem coordenadas GPS na parada atual: paradas pendentes organizadas pela sequência.', 'warning');
+          return;
         }
-      }
 
-      function announceCurrentStop(force = false) {
-        const stop = appState.stops[appState.activeStopIndex];
-        if (!stop || !appState.voiceEnabled || !('speechSynthesis' in window)) return;
-        const key = `${stop.key}_${appState.activeStopIndex}`;
-        if (!force && appState.lastAnnouncedStopKey === key) return;
-        appState.lastAnnouncedStopKey = key;
+        const remaining = [...pending];
+        const orderedPending = [];
 
-        try {
-          window.speechSynthesis.cancel();
-          const qtd = stop.packages.length;
-          const pctWord = qtd === 1 ? '1 pacote' : `${qtd} pacotes`;
-          const nomeParte = stop.recipients && stop.recipients.length ? `, recebedor ${stop.recipients.join(', ')}` : '';
-          const phrase = `Parada ${stop.displayOrder}, bairro ${stop.bairro}, ${stop.addr}${nomeParte}, ${pctWord}.`;
-          const utter = new SpeechSynthesisUtterance(phrase);
-          utter.lang = 'pt-BR';
-          utter.rate = 1.02;
-          window.speechSynthesis.speak(utter);
-        } catch (_) {}
-      }
-
-      function completeAndAdvance() {
-        const current = appState.stops[appState.activeStopIndex];
-        if (current) {
-          const targetKeys = new Set(current.packages.map((p) => p.tn));
-          appState.rawPackages = appState.rawPackages.map((raw) => {
-            const tn = String(raw.tn ?? raw['SPX TN'] ?? raw.tracking ?? '').trim();
-            return targetKeys.has(tn) ? { ...raw, __done: true } : raw;
+        while (remaining.length > 0) {
+          remaining.sort((a, b) => {
+            const da = haversineMeters(refLat, refLng, a.lat ?? refLat, a.lng ?? refLng) ?? Number.POSITIVE_INFINITY;
+            const db = haversineMeters(refLat, refLng, b.lat ?? refLat, b.lng ?? refLng) ?? Number.POSITIVE_INFINITY;
+            if (da !== db) return da - db;
+            return a.minSeq - b.minSeq;
           });
-        }
-        stopGeigerSounds();
-        geigerArrivalAnnouncedKey = null;
-
-        const nextPendingIdx = appState.stops.findIndex((s, i) => i > appState.activeStopIndex && !s.completed);
-        const firstPendingIdx = appState.stops.findIndex((s) => !s.completed);
-        if (nextPendingIdx !== -1) {
-          appState.activeStopIndex = nextPendingIdx;
-        } else if (firstPendingIdx !== -1) {
-          appState.activeStopIndex = firstPendingIdx;
-        } else if (appState.activeStopIndex + 1 < appState.stops.length) {
-          appState.activeStopIndex += 1;
+          const nextStop = remaining.shift();
+          orderedPending.push(nextStop);
+          if (typeof nextStop.lat === 'number' && typeof nextStop.lng === 'number') {
+            refLat = nextStop.lat;
+            refLng = nextStop.lng;
+          }
         }
 
+        const deliveredStops = appState.stops.filter((s) => appState.deliveredStopIds.includes(s.id));
+        const merged = [...deliveredStops, ...orderedPending].map((stop, idx) => ({
+          ...stop,
+          stopNumber: idx + 1
+        }));
+
+        appState.stops = merged;
+        appState.activeStopId = orderedPending[0]?.id || appState.stops[0]?.id || null;
         renderAll(true);
+        showBanner(
+          `Rota dinâmica aplicada: ${orderedPending.length} paradas pendentes ordenadas por proximidade a partir da posição atual.`,
+          'success'
+        );
       }
 
       function setSortMode(mode) {
         appState.sortMode = mode;
-        appState.activeStopIndex = 0;
-        const btnBairro = document.getElementById('modeNeighborhood');
-        const btnRoute = document.getElementById('modeRoute');
-        if (btnBairro && btnRoute) {
-          if (mode === 'neighborhood') {
-            btnBairro.className = 'px-2.5 py-1.5 rounded-lg text-[11px] font-extrabold bg-white text-orange-700 shadow transition whitespace-nowrap';
-            btnRoute.className = 'px-2.5 py-1.5 rounded-lg text-[11px] font-extrabold text-white hover:bg-white/10 transition whitespace-nowrap';
+        const prevActiveId = appState.activeStopId;
+        appState.stops = buildStopsFromPackages(appState.rawPackages);
+        appState.activeStopId =
+          prevActiveId && appState.stops.some((s) => s.id === prevActiveId)
+            ? prevActiveId
+            : appState.stops.find((s) => !appState.deliveredStopIds.includes(s.id))?.id || appState.stops[0]?.id || null;
+        renderAll(true);
+      }
+
+      function selectNeighborhood(neighborhood) {
+        appState.selectedNeighborhood = neighborhood;
+        const visibleStops = getFilteredStops();
+        if (visibleStops.length > 0 && !visibleStops.some((s) => s.id === appState.activeStopId)) {
+          appState.activeStopId = visibleStops[0].id;
+        }
+        renderAll(true);
+      }
+
+      function getFilteredStops() {
+        if (appState.selectedNeighborhood === 'ALL') return appState.stops;
+        return appState.stops.filter((s) => s.neighborhood === appState.selectedNeighborhood);
+      }
+
+      function getActiveStop() {
+        return (
+          appState.stops.find((s) => s.id === appState.activeStopId) ||
+          getFilteredStops()[0] ||
+          appState.stops[0] ||
+          null
+        );
+      }
+
+      function selectStop(stopId, shouldSpeak = false) {
+        appState.activeStopId = stopId;
+        renderAll(true);
+        centerMapOnActiveStop();
+        if (shouldSpeak && appState.voiceEnabled) {
+          const stop = getActiveStop();
+          if (stop) speakStopDetails(stop);
+        }
+      }
+
+      function markStopDelivered(stopId) {
+        const stop = appState.stops.find((s) => s.id === stopId);
+        if (!stop) return;
+
+        if (!appState.deliveredStopIds.includes(stopId)) {
+          appState.deliveredStopIds.push(stopId);
+          appState.deliveredTimestamps[stopId] = Date.now();
+        }
+
+        const nextPending = appState.stops.find(
+          (s) =>
+            !appState.deliveredStopIds.includes(s.id) &&
+            (appState.selectedNeighborhood === 'ALL' || s.neighborhood === appState.selectedNeighborhood)
+        ) || appState.stops.find((s) => !appState.deliveredStopIds.includes(s.id));
+
+        if (nextPending) {
+          appState.activeStopId = nextPending.id;
+        }
+
+        renderAll(true);
+        if (nextPending && appState.voiceEnabled) {
+          speakStopDetails(nextPending);
+        }
+      }
+
+      function unmarkStopDelivered(stopId) {
+        appState.deliveredStopIds = appState.deliveredStopIds.filter((id) => id !== stopId);
+        delete appState.deliveredTimestamps[stopId];
+        appState.activeStopId = stopId;
+        renderAll(true);
+      }
+
+      function updatePaceMetrics() {
+        const deliveredCount = appState.deliveredStopIds.length;
+        const totalCount = appState.stops.length;
+        const elapsedMs = Math.max(Date.now() - (appState.routeStartTime || Date.now()), 60000);
+        const elapsedHours = elapsedMs / 3600000;
+
+        const currentPace = deliveredCount > 0 ? deliveredCount / elapsedHours : 0;
+
+        let dailyAvg = 0;
+        if (deliveredCount > 0) {
+          const timestamps = Object.values(appState.deliveredTimestamps || {}).filter((t) => typeof t === 'number');
+          if (timestamps.length >= 2) {
+            const minTs = Math.min(...timestamps, appState.routeStartTime || timestamps[0]);
+            const maxTs = Math.max(...timestamps);
+            const spanHours = Math.max((maxTs - minTs) / 3600000, 0.25);
+            dailyAvg = deliveredCount / spanHours;
           } else {
-            btnRoute.className = 'px-2.5 py-1.5 rounded-lg text-[11px] font-extrabold bg-white text-orange-700 shadow transition whitespace-nowrap';
-            btnBairro.className = 'px-2.5 py-1.5 rounded-lg text-[11px] font-extrabold text-white hover:bg-white/10 transition whitespace-nowrap';
+            dailyAvg = currentPace;
           }
         }
-        renderAll(false);
+
+        const paceEl = document.getElementById('stopsPerHourText');
+        const avgEl = document.getElementById('dailyAvgText');
+        if (paceEl) paceEl.textContent = `${currentPace.toFixed(1)}/h`;
+        if (avgEl) avgEl.textContent = `${dailyAvg.toFixed(1)}/h`;
+
+        const pct = totalCount > 0 ? Math.round((deliveredCount / totalCount) * 100) : 0;
+        const progressText = document.getElementById('progressText');
+        const progressBarFill = document.getElementById('progressBarFill');
+        if (progressText) progressText.textContent = `${deliveredCount}/${totalCount} (${pct}%)`;
+        if (progressBarFill) progressBarFill.style.width = `${pct}%`;
+
+        const subtitle = document.getElementById('routeStatusSubtitle');
+        const totalPackages = appState.rawPackages.length;
+        if (subtitle) {
+          subtitle.textContent = `${totalCount} paradas • ${totalPackages} pacotes • Ritmo ${currentPace.toFixed(1)} paradas/h`;
+        }
       }
 
-      function selectNeighborhood(bairroKey) {
-        appState.selectedNeighborhood = bairroKey || 'ALL';
-        appState.activeStopIndex = 0;
-        renderAll(false);
+      function renderNeighborhoodFilterBar() {
+        const bar = document.getElementById('neighborhoodFilterBar');
+        if (!bar) return;
+
+        const counts = new Map();
+        appState.stops.forEach((s) => {
+          counts.set(s.neighborhood, (counts.get(s.neighborhood) || 0) + 1);
+        });
+
+        const neighborhoods = Array.from(counts.keys());
+        let html = `
+          <button
+            type="button"
+            onclick="selectNeighborhood('ALL')"
+            class="shrink-0 px-2.5 py-1 rounded-full text-[11px] font-bold transition cursor-pointer ${
+              appState.selectedNeighborhood === 'ALL'
+                ? 'bg-white text-slate-950 shadow-xs'
+                : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+            }"
+          >
+            Todos (${appState.stops.length})
+          </button>
+        `;
+
+        neighborhoods.forEach((nb) => {
+          const color = getNeighborhoodColor(nb);
+          const isSelected = appState.selectedNeighborhood === nb;
+          html += `
+            <button
+              type="button"
+              onclick="selectNeighborhood('${escapeHtml(nb.replace(/'/g, "\\'"))}')"
+              class="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold transition cursor-pointer border ${
+                isSelected ? 'ring-2 ring-white scale-[1.02]' : 'opacity-90 hover:opacity-100'
+              }"
+              style="background-color: ${color.bg}; color: ${color.text}; border-color: ${color.border};"
+            >
+              <span class="w-2 h-2 rounded-full" style="background-color: ${color.hex};"></span>
+              <span>${escapeHtml(nb)} (${counts.get(nb)})</span>
+            </button>
+          `;
+        });
+
+        bar.innerHTML = html;
       }
 
-      function toggleVoice() {
+      function getNavigationUrls(stop) {
+        const hasCoords = typeof stop.lat === 'number' && typeof stop.lng === 'number';
+        const query = encodeURIComponent(`${stop.address}${stop.city ? `, ${stop.city}` : ''}`);
+        const mapsUrl = hasCoords
+          ? `https://www.google.com/maps/search/?api=1&query=${stop.lat},${stop.lng}`
+          : `https://www.google.com/maps/search/?api=1&query=${query}`;
+        const wazeUrl = hasCoords
+          ? `https://waze.com/ul?ll=${stop.lat},${stop.lng}&navigate=yes`
+          : `https://waze.com/ul?q=${query}&navigate=yes`;
+        return { mapsUrl, wazeUrl };
+      }
+
+      function renderActiveStopCard() {
+        const card = document.getElementById('activeStopCard');
+        if (!card) return;
+
+        const stop = getActiveStop();
+        if (!stop) {
+          card.innerHTML = `<p class="text-sm text-slate-500">Nenhuma parada disponível na rota atual.</p>`;
+          return;
+        }
+
+        const isDelivered = appState.deliveredStopIds.includes(stop.id);
+        const pkgCount = stop.packages.length;
+        const { mapsUrl, wazeUrl } = getNavigationUrls(stop);
+
+        let distanceLabel = '';
+        if (appState.userLocation && typeof stop.lat === 'number' && typeof stop.lng === 'number') {
+          const dist = haversineMeters(appState.userLocation.lat, appState.userLocation.lng, stop.lat, stop.lng);
+          if (typeof dist === 'number') {
+            distanceLabel =
+              dist >= 1000
+                ? `<span class="text-xs font-bold text-slate-600">• ${(dist / 1000).toFixed(1)} km de você</span>`
+                : `<span class="text-xs font-bold text-emerald-700">• ${Math.round(dist)}m de você</span>`;
+          }
+        }
+
+        const codesHtml = stop.packages
+          .map((p) => {
+            const last4 = String(p.code).slice(-4);
+            return `<span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-100 border border-slate-200 text-xs font-mono font-bold text-slate-800" title="${escapeHtml(p.code)}">
+              <span>${escapeHtml(p.code)}</span>
+              <span class="px-1 rounded bg-amber-200 text-slate-950 font-extrabold">#${escapeHtml(last4)}</span>
+            </span>`;
+          })
+          .join('');
+
+        card.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span
+                class="px-2.5 py-1 rounded-lg text-xs font-extrabold text-white shadow-xs"
+                style="background-color: ${stop.color.hex};"
+              >
+                Parada #${stop.stopNumber}
+              </span>
+              <span
+                class="px-2.5 py-1 rounded-lg text-xs font-bold border"
+                style="background-color: ${stop.color.bg}; color: ${stop.color.text}; border-color: ${stop.color.border};"
+              >
+                ${escapeHtml(stop.neighborhood)}
+              </span>
+              <span class="px-2.5 py-1 rounded-lg text-xs font-extrabold bg-slate-900 text-amber-300">
+                ${pkgCount} ${pkgCount === 1 ? 'PCT' : 'PCTS'}
+              </span>
+              ${distanceLabel}
+            </div>
+
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${
+              isDelivered ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'
+            }">
+              ${isDelivered ? '✅ Entregue' : '⏳ Pendente'}
+            </span>
+          </div>
+
+          <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 leading-snug">
+            ${escapeHtml(stop.address)}
+          </h3>
+          <p class="text-xs sm:text-sm text-slate-600 mt-0.5">
+            Destinatário: <strong class="text-slate-800">${escapeHtml(stop.recipient || 'Não informado')}</strong>
+            ${stop.city ? ` • ${escapeHtml(stop.city)}` : ''}
+          </p>
+
+          <div class="mt-3">
+            <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Códigos / Final</p>
+            <div class="flex flex-wrap gap-1.5">${codesHtml}</div>
+          </div>
+
+          <div class="mt-4 pt-3.5 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <a
+              href="${mapsUrl}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition text-center"
+            >
+              <span>🗺️</span>
+              <span>Maps</span>
+            </a>
+
+            <a
+              href="${wazeUrl}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-extrabold text-xs transition text-center"
+            >
+              <span>🚗</span>
+              <span>Waze</span>
+            </a>
+
+            <button
+              type="button"
+              onclick="speakStopDetails(getActiveStop())"
+              class="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition cursor-pointer"
+            >
+              <span>🔊</span>
+              <span>Falar</span>
+            </button>
+
+            ${
+              isDelivered
+                ? `<button
+                    type="button"
+                    onclick="unmarkStopDelivered('${stop.id}')"
+                    class="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 font-extrabold text-xs transition cursor-pointer"
+                  >
+                    <span>↩️</span>
+                    <span>Desfazer</span>
+                  </button>`
+                : `<button
+                    type="button"
+                    onclick="markStopDelivered('${stop.id}')"
+                    class="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs transition cursor-pointer"
+                  >
+                    <span>✅</span>
+                    <span>Entregue</span>
+                  </button>`
+            }
+          </div>
+        `;
+      }
+
+      function renderStopsList() {
+        const listEl = document.getElementById('stopsList');
+        const summaryEl = document.getElementById('stopsCountSummary');
+        const badgeEl = document.getElementById('activeSortBadge');
+        if (!listEl) return;
+
+        const stops = getFilteredStops();
+        const activeStop = getActiveStop();
+
+        if (summaryEl) {
+          summaryEl.textContent =
+            appState.selectedNeighborhood === 'ALL'
+              ? `Mostrando todas as ${stops.length} paradas`
+              : `${stops.length} paradas em ${appState.selectedNeighborhood}`;
+        }
+
+        if (badgeEl) {
+          badgeEl.textContent = appState.sortMode === 'sequence' ? 'Ordenado: Parada' : 'Ordenado: Bairro';
+        }
+
+        if (stops.length === 0) {
+          listEl.innerHTML = `<div class="p-6 text-center text-sm text-slate-500">Nenhuma parada encontrada neste filtro.</div>`;
+          return;
+        }
+
+        listEl.innerHTML = stops
+          .map((stop) => {
+            const isActive = activeStop && activeStop.id === stop.id;
+            const isDelivered = appState.deliveredStopIds.includes(stop.id);
+            const pkgCount = stop.packages.length;
+            const last4List = stop.packages.map((p) => String(p.code).slice(-4)).join(', ');
+
+            return `
+              <div
+                onclick="selectStop('${stop.id}', false)"
+                class="p-3.5 transition cursor-pointer flex items-start justify-between gap-3 ${
+                  isActive ? 'bg-amber-50/90 border-l-4 border-l-amber-500' : 'hover:bg-slate-50'
+                } ${isDelivered ? 'opacity-65' : ''}"
+              >
+                <div class="flex items-start gap-2.5 min-w-0">
+                  <span
+                    class="w-7 h-7 rounded-lg text-white font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5"
+                    style="background-color: ${stop.color.hex};"
+                  >
+                    ${stop.stopNumber}
+                  </span>
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                      <span class="text-xs font-extrabold text-slate-900 truncate">${escapeHtml(stop.address)}</span>
+                      ${
+                        isDelivered
+                          ? `<span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">ENTREGUE</span>`
+                          : ''
+                      }
+                    </div>
+                    <p class="text-[11px] text-slate-500 truncate mt-0.5">
+                      <strong style="color: ${stop.color.text};">${escapeHtml(stop.neighborhood)}</strong>
+                      ${stop.recipient ? ` • ${escapeHtml(stop.recipient)}` : ''}
+                    </p>
+                    <p class="text-[11px] font-mono text-slate-400 mt-0.5 truncate">
+                      Final: ${escapeHtml(last4List)}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex flex-col items-end gap-1.5 shrink-0">
+                  <span class="text-[11px] font-extrabold px-2 py-0.5 rounded-md bg-slate-100 text-slate-800">
+                    ${pkgCount} ${pkgCount === 1 ? 'PCT' : 'PCTS'}
+                  </span>
+                  ${
+                    !isDelivered
+                      ? `<button
+                          type="button"
+                          onclick="event.stopPropagation(); markStopDelivered('${stop.id}');"
+                          class="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer"
+                        >
+                          OK
+                        </button>`
+                      : ''
+                  }
+                </div>
+              </div>
+            `;
+          })
+          .join('');
+      }
+
+      function initMap() {
+        if (typeof L === 'undefined') return;
+        const mapContainer = document.getElementById('map');
+        if (!mapContainer || mapInstance) return;
+
+        mapInstance = L.map('map', { zoomControl: true }).setView([-23.561, -46.655], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap',
+          maxZoom: 19
+        }).addTo(mapInstance);
+
+        markersLayer = L.layerGroup().addTo(mapInstance);
+      }
+
+      function renderMapMarkers() {
+        if (!mapInstance || !markersLayer) return;
+        markersLayer.clearLayers();
+
+        const stopsWithCoords = getFilteredStops().filter((s) => typeof s.lat === 'number' && typeof s.lng === 'number');
+        const activeStop = getActiveStop();
+        const bounds = [];
+
+        stopsWithCoords.forEach((stop) => {
+          const isActive = activeStop && activeStop.id === stop.id;
+          const isDelivered = appState.deliveredStopIds.includes(stop.id);
+          const size = isActive ? 34 : 26;
+
+          const icon = L.divIcon({
+            className: '',
+            html: `<div class="custom-pin rounded-full" style="width:${size}px;height:${size}px;background-color:${
+              isDelivered ? '#10b981' : stop.color.hex
+            };font-size:${isActive ? '13px' : '11px'};opacity:${isDelivered ? '0.75' : '1'};">${stop.stopNumber}</div>`,
+            iconSize: [size, size],
+            iconAnchor: [size / 2, size / 2]
+          });
+
+          const marker = L.marker([stop.lat, stop.lng], { icon }).addTo(markersLayer);
+          marker.bindTooltip(`#${stop.stopNumber} • ${stop.address} (${stop.packages.length} pct)`);
+          marker.on('click', () => {
+            selectStop(stop.id, false);
+          });
+
+          bounds.push([stop.lat, stop.lng]);
+        });
+
+        if (appState.userLocation) {
+          const { lat, lng } = appState.userLocation;
+          bounds.push([lat, lng]);
+          if (!userMarker) {
+            userMarker = L.circleMarker([lat, lng], {
+              radius: 8,
+              color: '#ffffff',
+              weight: 2,
+              fillColor: '#2563eb',
+              fillOpacity: 1
+            })
+              .bindTooltip('Sua posição GPS')
+              .addTo(mapInstance);
+          } else {
+            userMarker.setLatLng([lat, lng]);
+          }
+        }
+
+        if (activeStop && typeof activeStop.lat === 'number' && typeof activeStop.lng === 'number') {
+          mapInstance.setView([activeStop.lat, activeStop.lng], Math.max(mapInstance.getZoom(), 14), { animate: true });
+        } else if (bounds.length > 0) {
+          mapInstance.fitBounds(bounds, { padding: [24, 24], maxZoom: 15 });
+        }
+      }
+
+      function centerMapOnActiveStop() {
+        const activeStop = getActiveStop();
+        if (!mapInstance || !activeStop) return;
+        if (typeof activeStop.lat === 'number' && typeof activeStop.lng === 'number') {
+          mapInstance.setView([activeStop.lat, activeStop.lng], 15, { animate: true });
+        }
+      }
+
+      function toggleVoiceGuide() {
         appState.voiceEnabled = !appState.voiceEnabled;
         const icon = document.getElementById('voiceIcon');
         const label = document.getElementById('voiceLabel');
         if (icon) icon.textContent = appState.voiceEnabled ? '🔊' : '🔇';
-        if (label) label.textContent = appState.voiceEnabled ? 'Voz ON' : 'Voz OFF';
-        if (!appState.voiceEnabled && 'speechSynthesis' in window) {
-          try { window.speechSynthesis.cancel(); } catch (_) {}
-        } else if (appState.voiceEnabled) {
-          announceCurrentStop(true);
+        if (label) label.textContent = appState.voiceEnabled ? 'Voz' : 'Mudo';
+
+        if (!appState.voiceEnabled && typeof window.speechSynthesis !== 'undefined') {
+          window.speechSynthesis.cancel();
         }
+        showBanner(appState.voiceEnabled ? 'Narração por voz ativada.' : 'Narração por voz desativada.', 'info');
       }
 
-      function togglePhoneSimulator() {
-        document.body.classList.toggle('phone-sim-active');
-        const active = document.body.classList.contains('phone-sim-active');
-        const label = document.getElementById('phoneSimLabel');
-        if (label) label.textContent = active ? 'Tela Cheia' : 'Simular';
-        setTimeout(() => {
-          try { if (map) map.invalidateSize(); } catch (_) {}
-        }, 160);
-      }
-
-      function ensureGeigerAudio() {
-        try {
-          const AudioCtx = window.AudioContext || window.webkitAudioContext;
-          if (!AudioCtx) return null;
-          if (!geigerAudioCtx) {
-            geigerAudioCtx = new AudioCtx();
-          }
-          if (geigerAudioCtx.state === 'suspended') {
-            geigerAudioCtx.resume();
-          }
-          return geigerAudioCtx;
-        } catch (_) {
-          return null;
-        }
-      }
-
-      function stopGeigerSounds() {
-        if (geigerPulseTimer) {
-          clearTimeout(geigerPulseTimer);
-          geigerPulseTimer = null;
-        }
-        if (geigerContinuousTimeout) {
-          clearTimeout(geigerContinuousTimeout);
-          geigerContinuousTimeout = null;
-        }
-        if (geigerContinuousOsc) {
-          try {
-            geigerContinuousOsc.stop();
-            geigerContinuousOsc.disconnect();
-          } catch (_) {}
-          geigerContinuousOsc = null;
-        }
-        if (geigerContinuousGain) {
-          try {
-            geigerContinuousGain.disconnect();
-          } catch (_) {}
-          geigerContinuousGain = null;
-        }
-      }
-
-      function updateDriverMarker(lat, lng) {
-        if (!map || typeof L === 'undefined') return;
-        const pos = [lat, lng];
-        if (!driverMarker) {
-          const icon = L.divIcon({
-            className: '',
-            html: `<div style="width:18px;height:18px;border-radius:9999px;background:#0ea5e9;border:3px solid #ffffff;box-shadow:0 0 10px rgba(14,165,233,0.9);"></div>`,
-            iconSize: [18, 18],
-            iconAnchor: [9, 9]
-          });
-          driverMarker = L.marker(pos, { icon, zIndexOffset: 1200 }).addTo(map).bindTooltip('Você (GPS)');
-        } else {
-          driverMarker.setLatLng(pos);
-        }
-        if (appState.followGps) {
-          map.panTo(pos, { animate: true });
-        }
-      }
-
-      function toggleGpsTracking() {
-        const badge = document.getElementById('gpsStatusBadge');
-        const btn = document.getElementById('btnToggleGps');
-
-        if (appState.followGps) {
-          appState.followGps = false;
-          stopGeigerSounds();
-          if (appState.gpsWatchId !== null && navigator.geolocation) {
-            navigator.geolocation.clearWatch(appState.gpsWatchId);
-            appState.gpsWatchId = null;
-          }
-          if (badge) badge.textContent = 'GPS: manual';
-          if (btn) {
-            btn.textContent = '📍 Meu GPS';
-            btn.className = 'bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold text-[11px] px-2.5 py-1 rounded-lg transition whitespace-nowrap';
-          }
-          return;
-        }
-
-        if (!navigator.geolocation) {
-          if (badge) badge.textContent = 'GPS: indisponível';
-          return;
-        }
-
-        appState.followGps = true;
-        geigerArrivalAnnouncedKey = null;
-        if (badge) badge.textContent = 'GPS: buscando...';
-        if (btn) {
-          btn.textContent = '📍 GPS Ativo';
-          btn.className = 'bg-sky-500 hover:bg-sky-600 text-white font-extrabold text-[11px] px-2.5 py-1 rounded-lg transition whitespace-nowrap';
-        }
-
-        appState.gpsWatchId = navigator.geolocation.watchPosition(
-          (pos) => {
-            const { latitude, longitude } = pos.coords;
-            if (badge) badge.textContent = 'GPS: conectado';
-            updateDriverMarker(latitude, longitude);
-            evaluateGeigerProximity(latitude, longitude);
-          },
-          () => {
-            if (badge) badge.textContent = 'GPS: sem sinal';
-          },
-          { enableHighAccuracy: true, maximumAge: 2000, timeout: 10000 }
-        );
-      }
-
-      function playGeigerClick() {
-        if (!appState.geigerEnabled || !appState.followGps) return;
-        const ctx = ensureGeigerAudio();
-        if (!ctx) return;
-
-        try {
-          const now = ctx.currentTime;
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'square';
-          osc.frequency.setValueAtTime(1350, now);
-          gain.gain.setValueAtTime(0.001, now);
-          gain.gain.exponentialRampToValueAtTime(0.09, now + 0.005);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.045);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(now);
-          osc.stop(now + 0.05);
-        } catch (_) {}
-      }
-
-      function triggerContinuousGeiger7s(stop) {
-        if (geigerContinuousOsc) return;
-        const ctx = ensureGeigerAudio();
-        if (!ctx) return;
-
-        if (geigerPulseTimer) {
-          clearTimeout(geigerPulseTimer);
-          geigerPulseTimer = null;
-        }
-
-        try {
-          const now = ctx.currentTime;
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(1650, now);
-          gain.gain.setValueAtTime(0.08, now);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(now);
-
-          geigerContinuousOsc = osc;
-          geigerContinuousGain = gain;
-
-          geigerContinuousTimeout = setTimeout(() => {
-            stopGeigerSounds();
-            if (stop && geigerArrivalAnnouncedKey !== stop.key) {
-              geigerArrivalAnnouncedKey = stop.key;
-              speakStopArrival(stop);
-            }
-          }, 7000);
-        } catch (_) {
-          stopGeigerSounds();
-        }
-      }
-
-      function speakStopArrival(stop) {
-        if (!stop || !appState.voiceEnabled || !('speechSynthesis' in window)) return;
+      function speakStopDetails(stop) {
+        if (!stop || typeof window.speechSynthesis === 'undefined') return;
         try {
           window.speechSynthesis.cancel();
           const qtd = stop.packages.length;
           const pctWord = qtd === 1 ? '1 pacote' : `${qtd} pacotes`;
-          const phrase = `Parada ${stop.displayOrder}, ${stop.addr}, ${pctWord}.`;
-          const utter = new SpeechSynthesisUtterance(phrase);
+          const text = `Parada ${stop.stopNumber}, bairro ${stop.neighborhood}, ${stop.address}, ${
+            stop.recipient ? `${stop.recipient}, ` : ''
+          }${pctWord}.`;
+          const utter = new SpeechSynthesisUtterance(text);
           utter.lang = 'pt-BR';
-          utter.rate = 1.02;
+          utter.rate = 1.05;
           window.speechSynthesis.speak(utter);
-        } catch (_) {}
-      }
-
-      function evaluateGeigerProximity(lat, lng) {
-        const stop = appState.stops[appState.activeStopIndex];
-        if (!appState.geigerEnabled || !appState.followGps || !stop || stop.lat === null || stop.lng === null) {
-          stopGeigerSounds();
-          return;
-        }
-
-        const distMeters = haversineMeters(lat, lng, stop.lat, stop.lng);
-
-        if (distMeters <= 5) {
-          triggerContinuousGeiger7s(stop);
-          return;
-        }
-
-        if (geigerContinuousOsc) return;
-
-        if (distMeters <= 100) {
-          const ratio = Math.max(0, Math.min(1, (distMeters - 5) / 95));
-          const intervalMs = Math.round(140 + ratio * 960);
-
-          if (!geigerPulseTimer) {
-            const scheduleNext = () => {
-              if (!appState.geigerEnabled || !appState.followGps) {
-                stopGeigerSounds();
-                return;
-              }
-              playGeigerClick();
-              geigerPulseTimer = setTimeout(scheduleNext, intervalMs);
-            };
-            scheduleNext();
-          }
-        } else {
-          if (geigerPulseTimer) {
-            clearTimeout(geigerPulseTimer);
-            geigerPulseTimer = null;
-          }
+        } catch (err) {
+          // Ignora falhas de síntese de voz no navegador
         }
       }
 
-      function toggleGeiger() {
+      function toggleGeigerMode() {
         appState.geigerEnabled = !appState.geigerEnabled;
-        const btn = document.getElementById('btnToggleGeiger');
+        const btnText = document.getElementById('geigerBtnText');
+        const btn = document.getElementById('geigerBtn');
+        if (btnText) btnText.textContent = appState.geigerEnabled ? 'Geiger: ON' : 'Geiger: OFF';
         if (btn) {
-          if (appState.geigerEnabled) {
-            btn.textContent = '☢️ Geiger: ON';
-            btn.className = 'bg-amber-300 hover:bg-amber-200 text-slate-950 font-extrabold text-[11px] px-2.5 py-1 rounded-lg transition whitespace-nowrap';
-            ensureGeigerAudio();
-            if (!appState.followGps) {
-              toggleGpsTracking();
-            }
+          btn.className = appState.geigerEnabled
+            ? 'flex items-center gap-1 px-2 py-1 rounded-md font-bold bg-amber-400 text-slate-950 transition cursor-pointer'
+            : 'flex items-center gap-1 px-2 py-1 rounded-md font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition cursor-pointer';
+        }
+        showBanner(
+          appState.geigerEnabled
+            ? 'Geiger ativado: alerta sonoro ao se aproximar da parada ativa.'
+            : 'Geiger desligado.',
+          'info'
+        );
+      }
+
+      function playGeigerTone(durationSec = 0.08, freq = 920) {
+        try {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) return;
+          if (!audioCtx) audioCtx = new AudioContextClass();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + durationSec);
+        } catch (err) {
+          // Ignora bloqueio de áudio
+        }
+      }
+
+      function handleProximityGeiger(distanceMeters) {
+        const activeStop = getActiveStop();
+        const badge = document.getElementById('gpsDistanceBadge');
+        if (badge) {
+          if (typeof distanceMeters === 'number') {
+            badge.classList.remove('hidden');
+            badge.textContent = distanceMeters >= 1000 ? `${(distanceMeters / 1000).toFixed(1)} km` : `${Math.round(distanceMeters)}m`;
           } else {
-            btn.textContent = '☢️ Geiger: OFF';
-            btn.className = 'bg-slate-700 hover:bg-slate-600 text-amber-200 font-extrabold text-[11px] px-2.5 py-1 rounded-lg transition whitespace-nowrap';
-            stopGeigerSounds();
+            badge.classList.add('hidden');
+          }
+        }
+
+        if (!appState.geigerEnabled || !activeStop || typeof distanceMeters !== 'number') return;
+
+        const now = Date.now();
+        if (distanceMeters <= 6 && appState.lastAnnouncedStopId !== activeStop.id) {
+          appState.lastAnnouncedStopId = activeStop.id;
+          if (now - appState.lastContinuousAlarmAt > 12000) {
+            appState.lastContinuousAlarmAt = now;
+            playGeigerTone(0.5, 1180);
+            if (appState.voiceEnabled) speakStopDetails(activeStop);
+          }
+        } else if (distanceMeters <= 100) {
+          const intervalMs = Math.max(180, Math.min(1100, Math.round(distanceMeters * 10)));
+          if (now - appState.lastGeigerBeepAt >= intervalMs) {
+            appState.lastGeigerBeepAt = now;
+            playGeigerTone(0.06, 880);
           }
         }
       }
 
-      function handleFileUpload(event) {
+      function toggleGpsTracking() {
+        if (!navigator.geolocation) {
+          showBanner('Seu navegador não suporta geolocalização.', 'error');
+          return;
+        }
+
+        const btnText = document.getElementById('gpsBtnText');
+        const btn = document.getElementById('gpsBtn');
+
+        if (appState.gpsWatching) {
+          if (appState.gpsWatchId !== null) {
+            navigator.geolocation.clearWatch(appState.gpsWatchId);
+          }
+          appState.gpsWatching = false;
+          appState.gpsWatchId = null;
+          if (btnText) btnText.textContent = 'GPS';
+          if (btn) {
+            btn.className =
+              'flex items-center gap-1 px-2 py-1 rounded-md font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer';
+          }
+          showBanner('GPS pausado.', 'info');
+          return;
+        }
+
+        if (btnText) btnText.textContent = 'GPS ON';
+        if (btn) {
+          btn.className =
+            'flex items-center gap-1 px-2 py-1 rounded-md font-bold bg-emerald-500 text-slate-950 transition cursor-pointer';
+        }
+
+        appState.gpsWatching = true;
+        appState.gpsWatchId = navigator.geolocation.watchPosition(
+          (pos) => {
+            appState.userLocation = {
+              lat: pos.coords.latitude,
+              lng: pos.coords.longitude
+            };
+            renderMapMarkers();
+            renderActiveStopCard();
+
+            const activeStop = getActiveStop();
+            if (activeStop && typeof activeStop.lat === 'number' && typeof activeStop.lng === 'number') {
+              const dist = haversineMeters(
+                appState.userLocation.lat,
+                appState.userLocation.lng,
+                activeStop.lat,
+                activeStop.lng
+              );
+              handleProximityGeiger(dist);
+            }
+          },
+          (err) => {
+            showBanner(`Não foi possível obter o GPS (${err.message || 'verifique permissão HTTPS'}).`, 'warning');
+          },
+          { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
+        );
+      }
+
+      function parseNumberOrNull(val) {
+        if (typeof val === 'number' && !Number.isNaN(val)) return val;
+        if (typeof val === 'string') {
+          const cleaned = val.replace(',', '.').trim();
+          const num = Number(cleaned);
+          if (!Number.isNaN(num) && cleaned !== '') return num;
+        }
+        return null;
+      }
+
+      function handleExcelUpload(event) {
         const file = event.target.files && event.target.files[0];
         if (!file) return;
+
+        if (typeof XLSX === 'undefined') {
+          showBanner('Biblioteca de planilha indisponível no momento.', 'error');
+          return;
+        }
 
         const reader = new FileReader();
         reader.onload = function (e) {
           try {
             const data = new Uint8Array(e.target.result);
-            if (typeof XLSX === 'undefined') return;
             const workbook = XLSX.read(data, { type: 'array' });
-            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-            const jsonRows = XLSX.utils.sheet_to_json(firstSheet, { defval: '' });
-            if (!jsonRows.length) return;
-            appState.rawPackages = jsonRows;
-            appState.activeStopIndex = 0;
+            const firstSheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[firstSheetName];
+            const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+
+            if (!rows.length) {
+              showBanner('A planilha selecionada está vazia.', 'warning');
+              return;
+            }
+
+            const mapped = rows.map((row, index) => {
+              const keys = Object.keys(row);
+              const findVal = (candidates) => {
+                for (const c of candidates) {
+                  const foundKey = keys.find((k) => normalizeText(k).includes(normalizeText(c)));
+                  if (foundKey && String(row[foundKey]).trim() !== '') {
+                    return String(row[foundKey]).trim();
+                  }
+                }
+                return '';
+              };
+
+              const seqRaw = parseNumberOrNull(
+                findVal(['parada', 'seq', 'ordem', 'stop', 'sequencia'])
+              );
+              const code =
+                findVal(['codigo', 'pacote', 'rastreio', 'tracking', 'etiqueta', 'br', 'id']) ||
+                `PCT-${index + 1}`;
+              const address =
+                findVal(['endereco', 'logradouro', 'rua', 'address', 'destino']) ||
+                `Endereço Linha ${index + 1}`;
+              const neighborhood =
+                findVal(['bairro', 'regiao', 'setor', 'neighborhood', 'distrito']) || 'Sem Bairro';
+              const recipient = findVal(['destinatario', 'cliente', 'nome', 'recipient']) || '';
+              const city = findVal(['cidade', 'municipio', 'city']) || '';
+              const lat = parseNumberOrNull(findVal(['lat', 'latitude']));
+              const lng = parseNumberOrNull(findVal(['lng', 'lon', 'longitude']));
+
+              return {
+                seq: seqRaw || index + 1,
+                code,
+                recipient,
+                address,
+                neighborhood,
+                city,
+                lat,
+                lng
+              };
+            });
+
+            appState.rawPackages = mapped;
+            appState.deliveredStopIds = [];
+            appState.deliveredTimestamps = {};
+            appState.checkedPackages = {};
+            appState.routeStartTime = Date.now();
             appState.selectedNeighborhood = 'ALL';
-            appState.lastAnnouncedStopKey = null;
+            appState.stops = buildStopsFromPackages(appState.rawPackages);
+            appState.activeStopId = appState.stops[0]?.id || null;
+
             renderAll(true);
-          } catch (_) {}
+            showBanner(
+              `Planilha carregada: ${mapped.length} pacotes agrupados em ${appState.stops.length} paradas.`,
+              'success'
+            );
+          } catch (err) {
+            showBanner('Erro ao ler a planilha. Verifique se o arquivo é .xlsx, .xls ou .csv válido.', 'error');
+          } finally {
+            event.target.value = '';
+          }
         };
+
         reader.readAsArrayBuffer(file);
-        event.target.value = '';
       }
 
-      function openStagingModal() {
-        const modal = document.getElementById('stagingModal');
-        const container = document.getElementById('stagingBoxesContainer');
-        if (!modal || !container) return;
+      function openBaseSeparationModal() {
+        const modal = document.getElementById('baseModal');
+        const content = document.getElementById('baseModalContent');
+        const printArea = document.getElementById('printableLabelsArea');
+        if (!modal || !content) return;
 
-        const byBairro = new Map();
+        const byNeighborhood = new Map();
         appState.stops.forEach((stop) => {
-          const bKey = normalizeText(stop.bairro);
-          if (!byBairro.has(bKey)) {
-            byBairro.set(bKey, { key: bKey, bairro: stop.bairro, style: stop.style, stops: [], pkgCount: 0 });
+          if (!byNeighborhood.has(stop.neighborhood)) {
+            byNeighborhood.set(stop.neighborhood, []);
           }
-          const entry = byBairro.get(bKey);
-          entry.stops.push(stop);
-          entry.pkgCount += stop.packages.length;
+          byNeighborhood.get(stop.neighborhood).push(stop);
         });
 
-        container.innerHTML = Array.from(byBairro.values())
-          .map((group) => {
-            const itemsHtml = group.stops
-              .flatMap((stop) =>
-                stop.packages.map((pkg, i) => {
-                  const pKey = `${stop.key}__${pkg.tn}__${i}`;
-                  const checked = !!appState.stagedPackageKeys[pKey];
-                  const last4 = pkg.tn.slice(-4);
-                  return `
-                    <label class="flex items-center justify-between gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200 text-xs cursor-pointer">
-                      <span class="flex items-center gap-2 min-w-0">
-                        <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleStagedPackage('${pKey.replace(/'/g, "\\'")}', this.checked)" class="w-4 h-4 accent-orange-600" />
-                        <span class="font-black text-slate-900">P#${stop.displayOrder}</span>
-                        <span class="truncate text-slate-700">${stop.addr}</span>
-                      </span>
-                      <span class="font-mono font-black bg-amber-200 text-slate-950 px-1.5 py-0.5 rounded shrink-0">${last4}</span>
-                    </label>
-                  `;
-                })
-              )
-              .join('');
+        let cardsHtml = '';
+        let printHtml = '';
 
-            return `
-              <div class="rounded-2xl border-2 p-3 bg-white" style="border-color:${group.style.hex};">
-                <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-100">
-                  <div class="flex items-center gap-2">
-                    <span class="w-4 h-4 rounded-full inline-block" style="background:${group.style.hex};"></span>
-                    <span class="font-black text-sm text-slate-900">${group.bairro}</span>
-                    <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">${group.pkgCount} pct</span>
-                  </div>
-                  <div class="flex items-center gap-1.5 text-xs">
-                    <span class="font-bold text-slate-500">Caixa/Sacola:</span>
+        byNeighborhood.forEach((stopsInNb, nb) => {
+          const color = getNeighborhoodColor(nb);
+          const customBoxName = appState.boxLabels[nb] || `Caixa ${color.name.trim()} • ${nb}`;
+          const totalPctInNb = stopsInNb.reduce((acc, s) => acc + s.packages.length, 0);
+
+          let itemsHtml = '';
+          stopsInNb.forEach((stop) => {
+            stop.packages.forEach((pkg) => {
+              const isChecked = !!appState.checkedPackages[pkg.uid];
+              const last4 = String(pkg.code).slice(-4);
+
+              itemsHtml += `
+                <label class="flex items-center justify-between gap-2 py-1.5 px-2 rounded-lg hover:bg-slate-50 text-xs cursor-pointer">
+                  <div class="flex items-center gap-2 min-w-0">
                     <input
-                      type="text"
-                      value="${group.style.boxLabel.replace(/"/g, '&quot;')}"
-                      onchange="updateBoxLabel('${group.key.replace(/'/g, "\\'")}', this.value)"
-                      class="border border-slate-300 rounded-lg px-2 py-1 font-bold text-slate-800 text-xs"
+                      type="checkbox"
+                      ${isChecked ? 'checked' : ''}
+                      onchange="togglePackageChecked('${pkg.uid.replace(/'/g, "\\'")}')"
+                      class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
                     />
+                    <span class="font-bold text-slate-700">#${stop.stopNumber}</span>
+                    <span class="truncate text-slate-800">${escapeHtml(stop.address)}</span>
                   </div>
+                  <span class="font-mono font-bold text-slate-900 shrink-0">${escapeHtml(pkg.code)} (<b>${escapeHtml(last4)}</b>)</span>
+                </label>
+              `;
+
+              printHtml += `
+                <div style="border: 1.5px solid #0f172a; border-radius: 8px; padding: 8px; font-family: Inter, sans-serif; page-break-inside: avoid;">
+                  <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:800;">
+                    <span>PARADA #${stop.stopNumber}</span>
+                    <span>${escapeHtml(nb.toUpperCase())}</span>
+                  </div>
+                  <div style="font-size:12px; font-weight:700; margin-top:4px;">${escapeHtml(stop.address)}</div>
+                  <div style="font-size:11px; margin-top:2px;">Qtd no ponto: <strong>${stop.packages.length}</strong> • Final: <strong>${escapeHtml(last4)}</strong></div>
+                  <div style="font-size:10px; font-family:monospace; color:#334155; margin-top:2px;">${escapeHtml(pkg.code)}</div>
                 </div>
-                <div class="mt-2.5 grid grid-cols-1 sm:grid-cols-2 gap-1.5 max-h-48 overflow-y-auto">
-                  ${itemsHtml}
-                </div>
-              </div>
-            `;
-          })
-          .join('');
-
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-      }
-
-      function closeStagingModal() {
-        const modal = document.getElementById('stagingModal');
-        if (modal) {
-          modal.classList.add('hidden');
-          modal.classList.remove('flex');
-        }
-        renderAll(false);
-      }
-
-      function toggleStagedPackage(pKey, isChecked) {
-        appState.stagedPackageKeys[pKey] = isChecked;
-      }
-
-      function updateBoxLabel(bKey, val) {
-        appState.customBoxLabels[bKey] = String(val || '').trim();
-      }
-
-      function printPackageLabels() {
-        const printArea = document.getElementById('printableLabelsArea');
-        if (!printArea) return;
-
-        const labels = [];
-        appState.stops.forEach((stop) => {
-          stop.packages.forEach((pkg) => {
-            labels.push({
-              order: stop.displayOrder,
-              bairro: stop.bairro,
-              box: stop.style.boxLabel,
-              colorHex: stop.style.hex,
-              addr: stop.addr,
-              city: stop.city,
-              zip: stop.zip,
-              qty: stop.packages.length,
-              tn: pkg.tn,
-              last4: pkg.tn.slice(-4),
-              recipient: pkg.recipient || stop.recipients[0] || ''
+              `;
             });
           });
-        });
 
-        printArea.innerHTML = labels
-          .map(
-            (l) => `
-            <div style="border: 2px solid ${l.colorHex}; border-radius: 10px; padding: 10px; break-inside: avoid; background: #fff; color: #0f172a; font-family: Inter, sans-serif;">
-              <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding-bottom:6px; margin-bottom:6px;">
-                <span style="background:${l.colorHex}; color:#fff; font-weight:900; font-size:14px; padding:2px 8px; border-radius:6px;">PARADA #${l.order}</span>
-                <span style="font-weight:900; font-size:12px;">${l.qty} ${l.qty === 1 ? 'PCT' : 'PCTS'} NO PONTO</span>
+          cardsHtml += `
+            <div class="border rounded-xl overflow-hidden" style="border-color: ${color.border};">
+              <div class="px-3.5 py-2.5 flex flex-wrap items-center justify-between gap-2" style="background-color: ${color.bg}; color: ${color.text};">
+                <div class="flex items-center gap-2 flex-1 min-w-[200px]">
+                  <span class="w-3 h-3 rounded-full shrink-0" style="background-color: ${color.hex};"></span>
+                  <input
+                    type="text"
+                    value="${escapeHtml(customBoxName)}"
+                    onchange="updateBoxLabel('${escapeHtml(nb.replace(/'/g, "\\'"))}', this.value)"
+                    class="bg-white/80 text-slate-900 text-xs font-extrabold px-2 py-1 rounded border border-black/10 w-full max-w-xs"
+                  />
+                </div>
+                <span class="text-xs font-extrabold">${stopsInNb.length} paradas • ${totalPctInNb} pcts</span>
               </div>
-              <div style="font-size:11px; font-weight:800; color:#334155;">${l.box} • ${l.bairro}</div>
-              <div style="font-size:12px; font-weight:800; margin-top:4px; line-height:1.25;">${l.addr}</div>
-              ${l.recipient ? `<div style="font-size:11px; font-weight:700; color:#1e3a8a; margin-top:3px;">Nome: ${l.recipient}</div>` : ''}
-              <div style="margin-top:8px; display:flex; justify-content:space-between; align-items:center; background:#f8fafc; padding:5px 8px; border-radius:6px; border:1px dashed #94a3b8;">
-                <span style="font-family:monospace; font-size:11px; font-weight:700;">${l.tn}</span>
-                <span style="background:#fde047; font-family:monospace; font-size:14px; font-weight:900; padding:1px 6px; border-radius:4px;">#${l.last4}</span>
+              <div class="p-2 bg-white divide-y divide-slate-100">
+                ${itemsHtml}
               </div>
             </div>
-          `
-          )
-          .join('');
+          `;
+        });
 
-        printArea.classList.remove('hidden');
-        setTimeout(() => {
-          window.print();
-          printArea.classList.add('hidden');
-        }, 120);
+        content.innerHTML = cardsHtml;
+        if (printArea) printArea.innerHTML = printHtml;
+        modal.classList.remove('hidden');
       }
 
-      window.onload = function () {
+      function closeBaseSeparationModal() {
+        const modal = document.getElementById('baseModal');
+        if (modal) modal.classList.add('hidden');
+      }
+
+      function updateBoxLabel(neighborhood, value) {
+        appState.boxLabels[neighborhood] = value;
+      }
+
+      function togglePackageChecked(uid) {
+        appState.checkedPackages[uid] = !appState.checkedPackages[uid];
+      }
+
+      function togglePhoneSimulator() {
+        appState.phoneSimActive = !appState.phoneSimActive;
+        document.body.classList.toggle('phone-sim-active', appState.phoneSimActive);
+        const label = document.getElementById('phoneSimBtnLabel');
+        if (label) {
+          label.textContent = appState.phoneSimActive ? 'Tela Cheia' : 'Simular';
+        }
+        if (mapInstance) {
+          setTimeout(() => mapInstance.invalidateSize(), 200);
+        }
+      }
+
+      function installPwaApp() {
+        if (!appState.deferredInstallPrompt) return;
+        appState.deferredInstallPrompt.prompt();
+        appState.deferredInstallPrompt.userChoice.finally(() => {
+          appState.deferredInstallPrompt = null;
+          const btn = document.getElementById('installPwaBtn');
+          if (btn) btn.classList.add('hidden');
+        });
+      }
+
+      function resetDemoOrProgress() {
+        appState.deliveredStopIds = [];
+        appState.deliveredTimestamps = {};
+        appState.checkedPackages = {};
+        appState.routeStartTime = Date.now();
+        appState.selectedNeighborhood = 'ALL';
+        appState.stops = buildStopsFromPackages(appState.rawPackages);
+        appState.activeStopId = appState.stops[0]?.id || null;
+        renderAll(true);
+        showBanner('Progresso da rota resetado.', 'info');
+      }
+
+      function renderAll(shouldUpdateMap = true) {
+        updatePaceMetrics();
+        renderNeighborhoodFilterBar();
+        renderActiveStopCard();
+        renderStopsList();
+        if (shouldUpdateMap) {
+          renderMapMarkers();
+        }
+      }
+
+      function setupCopyProtection() {
+        document.addEventListener(
+          'contextmenu',
+          (e) => {
+            e.preventDefault();
+          },
+          { capture: true }
+        );
+
+        ['copy', 'cut', 'dragstart'].forEach((evtName) => {
+          document.addEventListener(
+            evtName,
+            (e) => {
+              const target = e.target;
+              const isEditableInput =
+                target &&
+                (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable);
+              if (!isEditableInput) {
+                e.preventDefault();
+              }
+            },
+            { capture: true }
+          );
+        });
+
+        document.addEventListener(
+          'keydown',
+          (e) => {
+            const key = String(e.key || '').toLowerCase();
+            const isCtrlOrMeta = e.ctrlKey || e.metaKey;
+            const blockedCombos =
+              (isCtrlOrMeta && ['c', 'x', 'u', 's', 'a', 'p'].includes(key)) ||
+              (isCtrlOrMeta && e.shiftKey && ['i', 'j', 'c'].includes(key)) ||
+              e.key === 'F12';
+
+            if (blockedCombos) {
+              e.preventDefault();
+            }
+          },
+          { capture: true }
+        );
+      }
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        appState.deferredInstallPrompt = e;
+        const btn = document.getElementById('installPwaBtn');
+        if (btn) btn.classList.remove('hidden');
+        if (btn) btn.classList.add('flex');
+      });
+
+      window.addEventListener('DOMContentLoaded', function () {
+        setupCopyProtection();
         appState.rawPackages = RAW_SAMPLE_DATA.map((d) => ({ ...d }));
+        appState.stops = buildStopsFromPackages(appState.rawPackages);
+        appState.activeStopId = appState.stops[0]?.id || null;
         initMap();
-        renderAll(false);
-      };
+        renderAll(true);
+      });
     </script>
   </body>
 </html>
