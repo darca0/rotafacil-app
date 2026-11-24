@@ -77,6 +77,10 @@
       }
 
       @media print {
+        * {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
         body > *:not(#printableLabelsArea) {
           display: none !important;
         }
@@ -180,6 +184,16 @@
             </button>
 
             <button
+              type="button"
+              onclick="loadPiracicabaTestRoute()"
+              class="flex items-center gap-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs px-2.5 py-1.5 rounded-lg transition cursor-pointer"
+              title="Carregar roteiro de teste 10 paradas (Vila Rezende & Jardim Witier)"
+            >
+              <span>🧪</span>
+              <span class="hidden sm:inline">Teste 10P</span>
+            </button>
+
+            <button
               id="phoneSimBtn"
               type="button"
               onclick="togglePhoneSimulator()"
@@ -202,14 +216,14 @@
 
             <label
               class="flex items-center gap-1 bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs px-2.5 py-1.5 rounded-lg transition cursor-pointer"
-              title="Importar planilha (.xlsx, .xls, .csv)"
+              title="Importar planilha (.xlsx, .xls, .csv, .md, .txt)"
             >
               <span>📂</span>
               <span class="hidden sm:inline">Planilha</span>
               <input
                 id="excelFileInput"
                 type="file"
-                accept=".xlsx,.xls,.csv"
+                accept=".xlsx,.xls,.csv,.md,.txt,text/markdown,text/plain,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
                 class="hidden"
                 onchange="handleExcelUpload(event)"
               />
@@ -407,16 +421,19 @@
       ];
 
       const RAW_SAMPLE_DATA = [
-        { seq: 1, code: 'SPX884120941BR', recipient: 'Mariana Souza', address: 'Rua do Vergueiro, 420', neighborhood: 'Vila Mariana', city: 'São Paulo', lat: -23.5748, lng: -46.6392 },
-        { seq: 2, code: 'SPX884120942BR', recipient: 'Mariana Souza', address: 'Rua do Vergueiro, 420', neighborhood: 'Vila Mariana', city: 'São Paulo', lat: -23.5748, lng: -46.6392 },
-        { seq: 3, code: 'ML4092817712', recipient: 'Carlos Eduardo', address: 'Rua Domingos de Morais, 1180', neighborhood: 'Vila Mariana', city: 'São Paulo', lat: -23.5812, lng: -46.6375 },
-        { seq: 4, code: 'SPX884120988BR', recipient: 'Fernanda Lima', address: 'Rua Girassol, 310', neighborhood: 'Vila Madalena', city: 'São Paulo', lat: -23.5518, lng: -46.6889 },
-        { seq: 5, code: 'ML4092817904', recipient: 'Rafael Mendes', address: 'Rua Harmonia, 790', neighborhood: 'Vila Madalena', city: 'São Paulo', lat: -23.5546, lng: -46.6851 },
-        { seq: 6, code: 'SPX884121015BR', recipient: 'Patrícia Rocha', address: 'Av. Pompéia, 1540', neighborhood: 'Perdizes', city: 'São Paulo', lat: -23.5335, lng: -46.6844 },
-        { seq: 7, code: 'SPX884121016BR', recipient: 'Patrícia Rocha', address: 'Av. Pompéia, 1540', neighborhood: 'Perdizes', city: 'São Paulo', lat: -23.5335, lng: -46.6844 },
-        { seq: 8, code: 'ML4092818320', recipient: 'Lucas Almeida', address: 'Rua Cardoso de Almeida, 890', neighborhood: 'Perdizes', city: 'São Paulo', lat: -23.5378, lng: -46.6729 },
-        { seq: 9, code: 'SPX884121090BR', recipient: 'Juliana Costa', address: 'Rua da Mooca, 2110', neighborhood: 'Mooca', city: 'São Paulo', lat: -23.5512, lng: -46.5987 },
-        { seq: 10, code: 'ML4092818745', recipient: 'Bruno Carvalho', address: 'Rua Taquari, 645', neighborhood: 'Mooca', city: 'São Paulo', lat: -23.5469, lng: -46.6054 }
+        { seq: 1, code: 'SPX89104011BR', recipient: 'Camila Ferreira', address: 'Rua Antonio de Toledo Cunha, 145', neighborhood: 'Jardim Witier', city: 'Piracicaba', lat: -22.7042, lng: -47.6561 },
+        { seq: 1, code: 'SPX89104012BR', recipient: 'Camila Ferreira', address: 'Rua Antonio de Toledo Cunha, 145', neighborhood: 'Jardim Witier', city: 'Piracicaba', lat: -22.7042, lng: -47.6561 },
+        { seq: 2, code: 'SPX89104025BR', recipient: 'Rodrigo Alves', address: 'Rua Alceu Maynardi Araújo, 210', neighborhood: 'Jardim Witier', city: 'Piracicaba', lat: -22.7028, lng: -47.6584 },
+        { seq: 3, code: 'SPX89104038BR', recipient: 'Beatriz Martins', address: "Rua Joana D'Arc, 1595", neighborhood: 'Jardim Witier', city: 'Piracicaba', lat: -22.7056, lng: -47.6548 },
+        { seq: 3, code: 'SPX89104039BR', recipient: 'Beatriz Martins', address: "Rua Joana D'Arc, 1595", neighborhood: 'Jardim Witier', city: 'Piracicaba', lat: -22.7056, lng: -47.6548 },
+        { seq: 4, code: 'SPX89104054BR', recipient: 'Henrique Gomes', address: 'Avenida Rui Barbosa, 820', neighborhood: 'Vila Rezende', city: 'Piracicaba', lat: -22.7089, lng: -47.6502 },
+        { seq: 5, code: 'SPX89104067BR', recipient: 'Tatiane Ribeiro', address: 'Avenida Manoel Conceição, 540', neighborhood: 'Vila Rezende', city: 'Piracicaba', lat: -22.7115, lng: -47.6485 },
+        { seq: 6, code: 'SPX89104081BR', recipient: 'Diego Santos', address: 'Rua Adolfo Schievano, 95', neighborhood: 'Vila Rezende', city: 'Piracicaba', lat: -22.7074, lng: -47.6529 },
+        { seq: 6, code: 'SPX89104082BR', recipient: 'Diego Santos', address: 'Rua Adolfo Schievano, 95', neighborhood: 'Vila Rezende', city: 'Piracicaba', lat: -22.7074, lng: -47.6529 },
+        { seq: 7, code: 'SPX89104099BR', recipient: 'Vanessa Oliveira', address: 'Avenida Doutor Eulálio, 310', neighborhood: 'Vila Rezende', city: 'Piracicaba', lat: -22.7061, lng: -47.6491 },
+        { seq: 8, code: 'SPX89104112BR', recipient: 'Gustavo Pereira', address: 'Rua Dom João Bosco, 425', neighborhood: 'Vila Rezende', city: 'Piracicaba', lat: -22.7102, lng: -47.6518 },
+        { seq: 9, code: 'SPX89104126BR', recipient: 'Letícia Rocha', address: 'Rua Acácio do Canto, 180', neighborhood: 'Jardim Monumento', city: 'Piracicaba', lat: -22.7019, lng: -47.6512 },
+        { seq: 10, code: 'SPX89104140BR', recipient: 'Marcos Lima', address: 'Rua Capitão Humberto Aldrovandi, 260', neighborhood: 'Jardim Monumento', city: 'Piracicaba', lat: -22.7005, lng: -47.6498 }
       ];
 
       let appState = {
@@ -1024,7 +1041,7 @@
         const mapContainer = document.getElementById('map');
         if (!mapContainer || mapInstance) return;
 
-        mapInstance = L.map('map', { zoomControl: true }).setView([-23.561, -46.655], 12);
+        mapInstance = L.map('map', { zoomControl: true }).setView([-22.7065, -47.6525], 14);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; OpenStreetMap',
           maxZoom: 19
@@ -1267,9 +1284,148 @@
         return null;
       }
 
+      function parseMarkdownOrTextRows(textContent) {
+        const lines = String(textContent || '')
+          .split(/\r?\n/)
+          .map((l) => l.trim())
+          .filter(Boolean);
+
+        // 1) Procura linhas estilo CSV dentro do .md/.txt (ex: parada,codigo,destinatario,endereco,bairro,cidade)
+        const csvLines = lines.filter(
+          (l) => !l.startsWith('#') && !l.startsWith('|') && !l.startsWith('```') && !l.startsWith('*') && l.includes(',')
+        );
+        const headerIdx = csvLines.findIndex((l) => {
+          const n = normalizeText(l);
+          return n.includes('parada') || n.includes('codigo') || n.includes('endereco');
+        });
+
+        if (headerIdx !== -1 && typeof XLSX !== 'undefined') {
+          const csvBlock = csvLines.slice(headerIdx).join('\n');
+          const wb = XLSX.read(csvBlock, { type: 'string' });
+          const sheet = wb.Sheets[wb.SheetNames[0]];
+          const parsedCsvRows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+          if (parsedCsvRows.length > 0) return parsedCsvRows;
+        }
+
+        // 2) Fallback: procura tabela Markdown (| Parada | Código Pacote | ... |)
+        const tableLines = lines.filter((l) => l.startsWith('|') && l.endsWith('|'));
+        if (tableLines.length >= 3) {
+          const splitCells = (rowLine) =>
+            rowLine
+              .slice(1, -1)
+              .split('|')
+              .map((c) => c.trim());
+          const headers = splitCells(tableLines[0]);
+          const dataLines = tableLines.slice(1).filter((l) => !/^\|[\s\-:|]+\|$/.test(l));
+          return dataLines.map((line) => {
+            const cells = splitCells(line);
+            const obj = {};
+            headers.forEach((h, i) => {
+              obj[h] = cells[i] ?? '';
+            });
+            return obj;
+          });
+        }
+
+        return [];
+      }
+
+      function applyParsedRowsToApp(rows) {
+        const mapped = rows.map((row, index) => {
+          const keys = Object.keys(row);
+          const findVal = (candidates) => {
+            for (const c of candidates) {
+              const foundKey = keys.find((k) => normalizeText(k).includes(normalizeText(c)));
+              if (foundKey && String(row[foundKey]).trim() !== '') {
+                return String(row[foundKey]).trim();
+              }
+            }
+            return '';
+          };
+
+          const seqRaw = parseNumberOrNull(
+            findVal(['parada', 'seq', 'ordem', 'stop', 'sequencia'])
+          );
+          const code =
+            findVal(['codigo', 'pacote', 'rastreio', 'tracking', 'etiqueta', 'br', 'id']) ||
+            `PCT-${index + 1}`;
+          const address =
+            findVal(['endereco', 'logradouro', 'rua', 'address', 'destino']) ||
+            `Endereço Linha ${index + 1}`;
+          const neighborhood =
+            findVal(['bairro', 'regiao', 'setor', 'neighborhood', 'distrito']) || 'Sem Bairro';
+          const recipient = findVal(['destinatario', 'cliente', 'nome', 'recipient']) || '';
+          const city = findVal(['cidade', 'municipio', 'city']) || '';
+          const lat = parseNumberOrNull(findVal(['lat', 'latitude']));
+          const lng = parseNumberOrNull(findVal(['lng', 'lon', 'longitude']));
+
+          return {
+            seq: seqRaw || index + 1,
+            code,
+            recipient,
+            address,
+            neighborhood,
+            city,
+            lat,
+            lng
+          };
+        });
+
+        appState.rawPackages = mapped;
+        appState.deliveredStopIds = [];
+        appState.deliveredTimestamps = {};
+        appState.checkedPackages = {};
+        appState.routeStartTime = Date.now();
+        appState.selectedNeighborhood = 'ALL';
+        appState.stops = buildStopsFromPackages(appState.rawPackages);
+        appState.activeStopId = appState.stops[0]?.id || null;
+
+        renderAll(true);
+        showBanner(
+          `Rota carregada: ${mapped.length} pacotes agrupados em ${appState.stops.length} paradas.`,
+          'success'
+        );
+      }
+
+      function loadPiracicabaTestRoute() {
+        appState.rawPackages = RAW_SAMPLE_DATA.map((d) => ({ ...d }));
+        appState.deliveredStopIds = [];
+        appState.deliveredTimestamps = {};
+        appState.checkedPackages = {};
+        appState.routeStartTime = Date.now();
+        appState.selectedNeighborhood = 'ALL';
+        appState.stops = buildStopsFromPackages(appState.rawPackages);
+        appState.activeStopId = appState.stops[0]?.id || null;
+        renderAll(true);
+        showBanner('Roteiro de teste (10 paradas — Vila Rezende & Jardim Witier) carregado!', 'success');
+      }
+
       function handleExcelUpload(event) {
         const file = event.target.files && event.target.files[0];
         if (!file) return;
+
+        const fileName = String(file.name || '').toLowerCase();
+        const isMarkdownOrText = fileName.endsWith('.md') || fileName.endsWith('.txt');
+
+        if (isMarkdownOrText) {
+          const textReader = new FileReader();
+          textReader.onload = function (e) {
+            try {
+              const rows = parseMarkdownOrTextRows(e.target.result);
+              if (!rows.length) {
+                showBanner('Não encontrei tabela ou CSV de paradas dentro do arquivo .md/.txt.', 'warning');
+                return;
+              }
+              applyParsedRowsToApp(rows);
+            } catch (err) {
+              showBanner('Erro ao ler o arquivo .md/.txt.', 'error');
+            } finally {
+              event.target.value = '';
+            }
+          };
+          textReader.readAsText(file, 'UTF-8');
+          return;
+        }
 
         if (typeof XLSX === 'undefined') {
           showBanner('Biblioteca de planilha indisponível no momento.', 'error');
@@ -1290,62 +1446,9 @@
               return;
             }
 
-            const mapped = rows.map((row, index) => {
-              const keys = Object.keys(row);
-              const findVal = (candidates) => {
-                for (const c of candidates) {
-                  const foundKey = keys.find((k) => normalizeText(k).includes(normalizeText(c)));
-                  if (foundKey && String(row[foundKey]).trim() !== '') {
-                    return String(row[foundKey]).trim();
-                  }
-                }
-                return '';
-              };
-
-              const seqRaw = parseNumberOrNull(
-                findVal(['parada', 'seq', 'ordem', 'stop', 'sequencia'])
-              );
-              const code =
-                findVal(['codigo', 'pacote', 'rastreio', 'tracking', 'etiqueta', 'br', 'id']) ||
-                `PCT-${index + 1}`;
-              const address =
-                findVal(['endereco', 'logradouro', 'rua', 'address', 'destino']) ||
-                `Endereço Linha ${index + 1}`;
-              const neighborhood =
-                findVal(['bairro', 'regiao', 'setor', 'neighborhood', 'distrito']) || 'Sem Bairro';
-              const recipient = findVal(['destinatario', 'cliente', 'nome', 'recipient']) || '';
-              const city = findVal(['cidade', 'municipio', 'city']) || '';
-              const lat = parseNumberOrNull(findVal(['lat', 'latitude']));
-              const lng = parseNumberOrNull(findVal(['lng', 'lon', 'longitude']));
-
-              return {
-                seq: seqRaw || index + 1,
-                code,
-                recipient,
-                address,
-                neighborhood,
-                city,
-                lat,
-                lng
-              };
-            });
-
-            appState.rawPackages = mapped;
-            appState.deliveredStopIds = [];
-            appState.deliveredTimestamps = {};
-            appState.checkedPackages = {};
-            appState.routeStartTime = Date.now();
-            appState.selectedNeighborhood = 'ALL';
-            appState.stops = buildStopsFromPackages(appState.rawPackages);
-            appState.activeStopId = appState.stops[0]?.id || null;
-
-            renderAll(true);
-            showBanner(
-              `Planilha carregada: ${mapped.length} pacotes agrupados em ${appState.stops.length} paradas.`,
-              'success'
-            );
+            applyParsedRowsToApp(rows);
           } catch (err) {
-            showBanner('Erro ao ler a planilha. Verifique se o arquivo é .xlsx, .xls ou .csv válido.', 'error');
+            showBanner('Erro ao ler a planilha. Verifique se o arquivo é .xlsx, .xls, .csv ou .md válido.', 'error');
           } finally {
             event.target.value = '';
           }
@@ -1399,14 +1502,19 @@
               `;
 
               printHtml += `
-                <div style="border: 1.5px solid #0f172a; border-radius: 8px; padding: 8px; font-family: Inter, sans-serif; page-break-inside: avoid;">
-                  <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:800;">
+                <div style="border: 2px solid ${color.hex}; border-left: 10px solid ${color.hex}; border-radius: 8px; overflow: hidden; font-family: Inter, sans-serif; page-break-inside: avoid; background-color: #ffffff;">
+                  <div style="background-color: ${color.hex}; color: #ffffff; padding: 5px 8px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 800; letter-spacing: 0.03em;">
                     <span>PARADA #${stop.stopNumber}</span>
                     <span>${escapeHtml(nb.toUpperCase())}</span>
                   </div>
-                  <div style="font-size:12px; font-weight:700; margin-top:4px;">${escapeHtml(stop.address)}</div>
-                  <div style="font-size:11px; margin-top:2px;">Qtd no ponto: <strong>${stop.packages.length}</strong> • Final: <strong>${escapeHtml(last4)}</strong></div>
-                  <div style="font-size:10px; font-family:monospace; color:#334155; margin-top:2px;">${escapeHtml(pkg.code)}</div>
+                  <div style="padding: 7px 8px;">
+                    <div style="display: inline-block; background-color: ${color.bg}; color: ${color.text}; border: 1px solid ${color.border}; border-radius: 4px; padding: 1px 6px; font-size: 10px; font-weight: 800; margin-bottom: 4px;">
+                      ${escapeHtml(customBoxName)}
+                    </div>
+                    <div style="font-size: 12px; font-weight: 800; color: #0f172a;">${escapeHtml(stop.address)}</div>
+                    <div style="font-size: 11px; color: #1e293b; margin-top: 2px;">Qtd no ponto: <strong>${stop.packages.length}</strong> • Final: <strong>${escapeHtml(last4)}</strong></div>
+                    <div style="font-size: 10px; font-family: monospace; color: #475569; margin-top: 2px;">${escapeHtml(pkg.code)}</div>
+                  </div>
                 </div>
               `;
             });
