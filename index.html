@@ -12,12 +12,12 @@
       id="dynamic-favicon"
       rel="icon"
       type="image/svg+xml"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%230f172a'/%3E%3Crect x='88' y='408' width='104' height='22' rx='11' fill='%233b82f6'/%3E%3Crect x='204' y='408' width='104' height='22' rx='11' fill='%2310b981'/%3E%3Crect x='320' y='408' width='104' height='22' rx='11' fill='%23ef4444'/%3E%3Cpath d='M256 72c-79.5 0-144 64.5-144 144 0 98 144 216 144 216s144-118 144-216c0-79.5-64.5-144-144-144z' fill='%23dc2626'/%3E%3Ccircle cx='256' cy='212' r='82' fill='%230f172a'/%3E%3Cpolygon points='256,154 312,184 256,214 200,184' fill='%23fde68a'/%3E%3Cpolygon points='200,184 256,214 256,272 200,242' fill='%23f59e0b'/%3E%3Cpolygon points='312,184 256,214 256,272 312,242' fill='%23b45309'/%3E%3C/svg%3E"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%230f172a'/%3E%3Cg transform='translate(256 256) scale(0.76) translate(-256 -256)'%3E%3Crect x='88' y='408' width='104' height='22' rx='11' fill='%233b82f6'/%3E%3Crect x='204' y='408' width='104' height='22' rx='11' fill='%2310b981'/%3E%3Crect x='320' y='408' width='104' height='22' rx='11' fill='%23ef4444'/%3E%3Cpath d='M256 72c-79.5 0-144 64.5-144 144 0 98 144 216 144 216s144-118 144-216c0-79.5-64.5-144-144-144z' fill='%23dc2626'/%3E%3Ccircle cx='256' cy='212' r='82' fill='%230f172a'/%3E%3Cpolygon points='256,154 312,184 256,214 200,184' fill='%23fde68a'/%3E%3Cpolygon points='200,184 256,214 256,272 200,242' fill='%23f59e0b'/%3E%3Cpolygon points='312,184 256,214 256,272 312,242' fill='%23b45309'/%3E%3C/g%3E%3C/svg%3E"
     />
     <link
       id="dynamic-apple-icon"
       rel="apple-touch-icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%230f172a'/%3E%3Crect x='88' y='408' width='104' height='22' rx='11' fill='%233b82f6'/%3E%3Crect x='204' y='408' width='104' height='22' rx='11' fill='%2310b981'/%3E%3Crect x='320' y='408' width='104' height='22' rx='11' fill='%23ef4444'/%3E%3Cpath d='M256 72c-79.5 0-144 64.5-144 144 0 98 144 216 144 216s144-118 144-216c0-79.5-64.5-144-144-144z' fill='%23dc2626'/%3E%3Ccircle cx='256' cy='212' r='82' fill='%230f172a'/%3E%3Cpolygon points='256,154 312,184 256,214 200,184' fill='%23fde68a'/%3E%3Cpolygon points='200,184 256,214 256,272 200,242' fill='%23f59e0b'/%3E%3Cpolygon points='312,184 256,214 256,272 312,242' fill='%23b45309'/%3E%3C/svg%3E"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%230f172a'/%3E%3Cg transform='translate(256 256) scale(0.76) translate(-256 -256)'%3E%3Crect x='88' y='408' width='104' height='22' rx='11' fill='%233b82f6'/%3E%3Crect x='204' y='408' width='104' height='22' rx='11' fill='%2310b981'/%3E%3Crect x='320' y='408' width='104' height='22' rx='11' fill='%23ef4444'/%3E%3Cpath d='M256 72c-79.5 0-144 64.5-144 144 0 98 144 216 144 216s144-118 144-216c0-79.5-64.5-144-144-144z' fill='%23dc2626'/%3E%3Ccircle cx='256' cy='212' r='82' fill='%230f172a'/%3E%3Cpolygon points='256,154 312,184 256,214 200,184' fill='%23fde68a'/%3E%3Cpolygon points='200,184 256,214 256,272 200,242' fill='%23f59e0b'/%3E%3Cpolygon points='312,184 256,214 256,272 312,242' fill='%23b45309'/%3E%3C/g%3E%3C/svg%3E"
     />
     <link id="pwa-manifest-link" rel="manifest" href="" />
     <title>RotaFácil SPX &amp; ML — Roteirizador e Organizador de Entregas</title>
@@ -1612,40 +1612,46 @@
 
       function setupWebApkSupport() {
         try {
-          const svgMarkup = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-            <rect width="512" height="512" rx="112" fill="#0f172a"/>
-            <rect x="88" y="408" width="104" height="22" rx="11" fill="#3b82f6"/>
-            <rect x="204" y="408" width="104" height="22" rx="11" fill="#10b981"/>
-            <rect x="320" y="408" width="104" height="22" rx="11" fill="#ef4444"/>
-            <path d="M256 72c-79.5 0-144 64.5-144 144 0 98 144 216 144 216s144-118 144-216c0-79.5-64.5-144-144-144z" fill="#dc2626"/>
-            <circle cx="256" cy="212" r="82" fill="#0f172a"/>
-            <polygon points="256,154 312,184 256,214 200,184" fill="#fde68a"/>
-            <polygon points="200,184 256,214 256,272 200,242" fill="#f59e0b"/>
-            <polygon points="312,184 256,214 256,272 312,242" fill="#b45309"/>
+          const createIconSvg = (scaleFactor, isFullBleed) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+            <rect width="512" height="512" rx="${isFullBleed ? 0 : 112}" fill="#0f172a"/>
+            <g transform="translate(256 256) scale(${scaleFactor}) translate(-256 -256)">
+              <rect x="88" y="408" width="104" height="22" rx="11" fill="#3b82f6"/>
+              <rect x="204" y="408" width="104" height="22" rx="11" fill="#10b981"/>
+              <rect x="320" y="408" width="104" height="22" rx="11" fill="#ef4444"/>
+              <path d="M256 72c-79.5 0-144 64.5-144 144 0 98 144 216 144 216s144-118 144-216c0-79.5-64.5-144-144-144z" fill="#dc2626"/>
+              <circle cx="256" cy="212" r="82" fill="#0f172a"/>
+              <polygon points="256,154 312,184 256,214 200,184" fill="#fde68a"/>
+              <polygon points="200,184 256,214 256,272 200,242" fill="#f59e0b"/>
+              <polygon points="312,184 256,214 256,272 312,242" fill="#b45309"/>
+            </g>
           </svg>`;
 
-          const svgBlob = new Blob([svgMarkup], { type: 'image/svg+xml;charset=utf-8' });
-          const svgUrl = URL.createObjectURL(svgBlob);
-          const img = new Image();
+          const renderSvgToPng = (svgString, size) =>
+            new Promise((resolve) => {
+              const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+              const svgUrl = URL.createObjectURL(svgBlob);
+              const img = new Image();
+              img.onload = function () {
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, size, size);
+                URL.revokeObjectURL(svgUrl);
+                resolve(canvas.toDataURL('image/png'));
+              };
+              img.src = svgUrl;
+            });
 
-          img.onload = function () {
-            const buildPngDataUrl = (size) => {
-              const canvas = document.createElement('canvas');
-              canvas.width = size;
-              canvas.height = size;
-              const ctx = canvas.getContext('2d');
-              ctx.drawImage(img, 0, 0, size, size);
-              return canvas.toDataURL('image/png');
-            };
-
-            const png192 = buildPngDataUrl(192);
-            const png512 = buildPngDataUrl(512);
-            URL.revokeObjectURL(svgUrl);
-
+          Promise.all([
+            renderSvgToPng(createIconSvg(0.76, false), 192),
+            renderSvgToPng(createIconSvg(0.76, false), 512),
+            renderSvgToPng(createIconSvg(0.62, true), 512)
+          ]).then(([pngAny192, pngAny512, pngMaskable512]) => {
             const fav = document.getElementById('dynamic-favicon');
             const appleIcon = document.getElementById('dynamic-apple-icon');
-            if (fav) fav.href = png192;
-            if (appleIcon) appleIcon.href = png512;
+            if (fav) fav.href = pngAny192;
+            if (appleIcon) appleIcon.href = pngAny512;
 
             const currentUrl = window.location.href.split('#')[0];
             const manifestObj = {
@@ -1659,8 +1665,9 @@
               background_color: '#0f172a',
               theme_color: '#0f172a',
               icons: [
-                { src: png192, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
-                { src: png512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+                { src: pngAny192, sizes: '192x192', type: 'image/png', purpose: 'any' },
+                { src: pngAny512, sizes: '512x512', type: 'image/png', purpose: 'any' },
+                { src: pngMaskable512, sizes: '512x512', type: 'image/png', purpose: 'maskable' }
               ]
             };
 
@@ -1668,9 +1675,7 @@
             const manifestUrl = URL.createObjectURL(manifestBlob);
             const manifestLink = document.getElementById('pwa-manifest-link');
             if (manifestLink) manifestLink.href = manifestUrl;
-          };
-
-          img.src = svgUrl;
+          });
 
           if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
             const swCode = `
