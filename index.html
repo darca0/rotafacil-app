@@ -4,11 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="theme-color" content="#0f172a" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="RotaFácil" />
     <link
       rel="icon"
       type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%230f172a'/%3E%3Crect x='88' y='408' width='104' height='22' rx='11' fill='%233b82f6'/%3E%3Crect x='204' y='408' width='104' height='22' rx='11' fill='%2310b981'/%3E%3Crect x='320' y='408' width='104' height='22' rx='11' fill='%23ef4444'/%3E%3Cpath d='M256 72c-79.5 0-144 64.5-144 144 0 98 144 216 144 216s144-118 144-216c0-79.5-64.5-144-144-144z' fill='%23dc2626'/%3E%3Ccircle cx='256' cy='212' r='82' fill='%230f172a'/%3E%3Cpolygon points='256,154 312,184 256,214 200,184' fill='%23fde68a'/%3E%3Cpolygon points='200,184 256,214 256,272 200,242' fill='%23f59e0b'/%3Cpolygon points='312,184 256,214 256,272 312,242' fill='%23b45309'/%3E%3C/svg%3E"
+    />
+    <link
+      rel="apple-touch-icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%230f172a'/%3E%3Crect x='88' y='408' width='104' height='22' rx='11' fill='%233b82f6'/%3E%3Crect x='204' y='408' width='104' height='22' rx='11' fill='%2310b981'/%3E%3Crect x='320' y='408' width='104' height='22' rx='11' fill='%23ef4444'/%3E%3Cpath d='M256 72c-79.5 0-144 64.5-144 144 0 98 144 216 144 216s144-118 144-216c0-79.5-64.5-144-144-144z' fill='%23dc2626'/%3E%3Ccircle cx='256' cy='212' r='82' fill='%230f172a'/%3E%3Cpolygon points='256,154 312,184 256,214 200,184' fill='%23fde68a'/%3E%3Cpolygon points='200,184 256,214 256,272 200,242' fill='%23f59e0b'/%3E%3Cpolygon points='312,184 256,214 256,272 312,242' fill='%23b45309'/%3E%3C/svg%3E"
     />
     <title>RotaFácil SPX &amp; ML — Roteirizador e Organizador de Entregas</title>
@@ -180,24 +186,12 @@
             <div class="truncate">
               <div class="flex items-center gap-1.5">
                 <h1 class="font-extrabold text-sm sm:text-base tracking-tight truncate">RotaFácil SPX &amp; ML</h1>
-                <span class="hidden sm:inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-800 text-amber-300">PWA</span>
               </div>
               <p id="routeStatusSubtitle" class="text-[11px] text-slate-300 truncate">Carregando rota...</p>
             </div>
           </div>
 
           <div class="flex items-center gap-1.5 shrink-0">
-            <button
-              id="installPwaBtn"
-              type="button"
-              onclick="installPwaApp()"
-              class="hidden items-center gap-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs px-2.5 py-1.5 rounded-lg transition cursor-pointer"
-              title="Instalar aplicativo"
-            >
-              <span>⬇️</span>
-              <span class="hidden md:inline">Instalar</span>
-            </button>
-
             <button
               type="button"
               onclick="loadPiracicabaTestRoute()"
@@ -1587,13 +1581,7 @@
       }
 
       function installPwaApp() {
-        if (!appState.deferredInstallPrompt) return;
-        appState.deferredInstallPrompt.prompt();
-        appState.deferredInstallPrompt.userChoice.finally(() => {
-          appState.deferredInstallPrompt = null;
-          const btn = document.getElementById('installPwaBtn');
-          if (btn) btn.classList.add('hidden');
-        });
+        // Atalho de site padrão sem emblema extra
       }
 
       function resetDemoOrProgress() {
@@ -1663,10 +1651,6 @@
 
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
-        appState.deferredInstallPrompt = e;
-        const btn = document.getElementById('installPwaBtn');
-        if (btn) btn.classList.remove('hidden');
-        if (btn) btn.classList.add('flex');
       });
 
       window.addEventListener('DOMContentLoaded', function () {
