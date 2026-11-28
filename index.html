@@ -39,15 +39,299 @@
       rel="stylesheet"
     />
     <style>
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+
       body {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         background-color: #f1f5f9;
         color: #0f172a;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
         overflow-x: hidden;
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
+      }
+
+      /* Fallback CSS nativo completo caso o Tailwind CDN não carregue no tablet/multimídia */
+      header {
+        background-color: #0f172a;
+        color: #ffffff;
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+      }
+
+      header > div:first-child {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      header > div:first-child > div:first-child {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      header > div:first-child > div:first-child > div:first-child {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        overflow: hidden;
+        flex-shrink: 0;
+        border: 1px solid #334155;
+        background: #020617;
+      }
+
+      header svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 800;
+        color: #ffffff;
+      }
+
+      #routeStatusSubtitle {
+        margin: 2px 0 0;
+        font-size: 11px;
+        color: #cbd5e1;
+      }
+
+      header > div:first-child > div:last-child {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      header button, header label {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        border: 1px solid #334155;
+        background-color: #1e293b;
+        color: #f8fafc;
+        cursor: pointer;
+        text-decoration: none;
+      }
+
+      header label {
+        background-color: #fbbf24;
+        color: #0f172a;
+        border-color: #f59e0b;
+      }
+
+      #installAppBtn {
+        background-color: #e11d48;
+        border-color: #be123c;
+        color: #ffffff;
+      }
+
+      header > div:nth-child(2) {
+        background-color: #020617;
+        border-top: 1px solid #1e293b;
+        padding: 8px 14px;
+      }
+
+      header > div:nth-child(2) > div:first-child {
+        max-width: 1280px;
+        margin: 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        font-size: 12px;
+      }
+
+      header > div:nth-child(2) > div:first-child > div {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      #neighborhoodFilterBar {
+        max-width: 1280px;
+        margin: 8px auto 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        overflow-x: auto;
+        padding-bottom: 2px;
+      }
+
+      #neighborhoodFilterBar button {
+        border-radius: 9999px;
+        padding: 4px 10px;
+        font-size: 11px;
+        white-space: nowrap;
+      }
+
+      main {
+        max-width: 1280px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 14px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+        flex: 1;
+      }
+
+      @media (min-width: 900px) {
+        main {
+          grid-template-columns: 7fr 5fr;
+        }
+      }
+
+      main section {
+        background-color: #ffffff;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        overflow: hidden;
+      }
+
+      main section:first-child {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      main section:first-child > div {
+        background-color: #ffffff;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        overflow: hidden;
+      }
+
+      #activeStopCard {
+        padding: 16px;
+      }
+
+      #activeStopCard h3 {
+        margin: 8px 0 4px;
+        font-size: 18px;
+        font-weight: 800;
+        color: #0f172a;
+      }
+
+      #activeStopCard a, #activeStopCard button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 800;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+      }
+
+      #activeStopCard > div:last-child {
+        margin-top: 14px;
+        padding-top: 12px;
+        border-top: 1px solid #f1f5f9;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+
+      @media (min-width: 640px) {
+        #activeStopCard > div:last-child {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+
+      #activeStopCard > div:last-child a:nth-child(1) {
+        background-color: #2563eb;
+        color: #ffffff;
+      }
+
+      #activeStopCard > div:last-child a:nth-child(2) {
+        background-color: #38bdf8;
+        color: #0f172a;
+      }
+
+      #activeStopCard > div:last-child button:nth-child(3) {
+        background-color: #f1f5f9;
+        color: #0f172a;
+      }
+
+      #activeStopCard > div:last-child button:nth-child(4) {
+        background-color: #059669;
+        color: #ffffff;
+      }
+
+      #stopsList {
+        max-height: 520px;
+        overflow-y: auto;
+      }
+
+      #stopsList > div {
+        padding: 12px 14px;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+        cursor: pointer;
+      }
+
+      #baseModal.hidden, #feedbackBanner.hidden, #printableLabelsArea.hidden, .hidden {
+        display: none !important;
+      }
+
+      #baseModal {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        background: rgba(2, 6, 23, 0.75);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px;
+      }
+
+      #baseModal > div {
+        background: #ffffff;
+        border-radius: 16px;
+        max-width: 900px;
+        width: 100%;
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
       }
 
       input,
@@ -68,9 +352,10 @@
       }
 
       #map {
-        height: 300px;
+        height: 280px;
         width: 100%;
         z-index: 1;
+        background-color: #e2e8f0;
       }
 
       @media (min-width: 768px) {
@@ -1644,24 +1929,25 @@
             });
 
           Promise.all([
-            renderSvgToPng(createIconSvg(0.76, false), 192),
-            renderSvgToPng(createIconSvg(0.76, false), 512),
-            renderSvgToPng(createIconSvg(0.62, true), 512)
+            renderSvgToPng(createIconSvg(0.56, false), 192),
+            renderSvgToPng(createIconSvg(0.56, false), 512),
+            renderSvgToPng(createIconSvg(0.46, true), 512)
           ]).then(([pngAny192, pngAny512, pngMaskable512]) => {
             const fav = document.getElementById('dynamic-favicon');
             const appleIcon = document.getElementById('dynamic-apple-icon');
             if (fav) fav.href = pngAny192;
             if (appleIcon) appleIcon.href = pngAny512;
 
-            const currentUrl = window.location.href.split('#')[0];
+            const baseUrl = window.location.href.split('#')[0].split('?')[0];
             const manifestObj = {
+              id: `${baseUrl}?v=3`,
               name: 'RotaFácil SPX & ML',
               short_name: 'RotaFácil',
               description: 'Roteirizador e Organizador de Entregas SPX & Mercado Livre',
-              start_url: currentUrl,
-              scope: currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1) || './',
+              start_url: `${baseUrl}?v=3`,
+              scope: baseUrl.substring(0, baseUrl.lastIndexOf('/') + 1) || './',
               display: 'standalone',
-              orientation: 'portrait',
+              orientation: 'any',
               background_color: '#0f172a',
               theme_color: '#0f172a',
               icons: [
