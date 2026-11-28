@@ -520,19 +520,41 @@
         transition: transform 0.15s ease;
       }
 
+      @page {
+        size: A4 portrait;
+        margin: 8mm 5mm;
+      }
+
       @media print {
         * {
           -webkit-print-color-adjust: exact !important;
           print-color-adjust: exact !important;
         }
+        body {
+          background: #ffffff !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
         body > *:not(#printableLabelsArea) {
           display: none !important;
         }
-        #printableLabelsArea {
+        #printableLabelsArea.print-a4-14 {
           display: grid !important;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 10px;
-          padding: 8px;
+          grid-template-columns: repeat(2, 99mm);
+          grid-auto-rows: 38.1mm;
+          column-gap: 2mm;
+          row-gap: 0mm;
+          justify-content: center;
+          padding: 0;
+        }
+        #printableLabelsArea.print-a4-21 {
+          display: grid !important;
+          grid-template-columns: repeat(3, 63.5mm);
+          grid-auto-rows: 38.1mm;
+          column-gap: 2.5mm;
+          row-gap: 0mm;
+          justify-content: center;
+          padding: 0;
         }
       }
 
@@ -832,18 +854,27 @@
 
     <div id="baseModal" class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6">
       <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden">
-        <div class="px-5 py-3.5 bg-slate-900 text-white flex items-center justify-between gap-3">
+        <div class="px-5 py-3.5 bg-slate-900 text-white flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h3 class="font-extrabold text-base">🏷️ Separação na Base &amp; Etiquetas</h3>
-            <p class="text-xs text-slate-300">Organize caixas/sacolas por cor de bairro e imprima etiquetas de conferência</p>
+            <h3 class="font-extrabold text-base">🏷️ Separação na Base &amp; Etiquetas A4</h3>
+            <p class="text-xs text-slate-300">Escolha o modelo de folha adesiva A4 antes de imprimir</p>
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 flex-wrap">
+            <select
+              id="a4LabelPresetSelect"
+              onchange="setA4LabelPreset(this.value)"
+              class="bg-slate-800 text-white border border-slate-600 rounded-lg text-xs font-bold px-2.5 py-1.5 cursor-pointer"
+              title="Formato do papel etiqueta A4"
+            >
+              <option value="a4-14">A4 • 14 etiq. (2×7 • 99×38mm)</option>
+              <option value="a4-21">A4 • 21 etiq. (3×7 • 63,5×38mm)</option>
+            </select>
             <button
               type="button"
               onclick="window.print()"
               class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs px-3 py-1.5 rounded-lg cursor-pointer"
             >
-              🖨️ Imprimir Etiquetas
+              🖨️ Imprimir A4
             </button>
             <button
               type="button"
@@ -859,7 +890,7 @@
       </div>
     </div>
 
-    <div id="printableLabelsArea" class="hidden"></div>
+    <div id="printableLabelsArea" class="hidden print-a4-14"></div>
 
     <script>
       const NEIGHBORHOOD_PALETTE = [
@@ -905,6 +936,7 @@
         routeStartTime: Date.now(),
         boxLabels: {},
         checkedPackages: {},
+        a4Preset: 'a4-14',
         phoneSimActive: false,
         deferredInstallPrompt: null,
         lastAnnouncedStopId: null,
@@ -1918,11 +1950,24 @@
         reader.readAsArrayBuffer(file);
       }
 
+      function setA4LabelPreset(preset) {
+        appState.a4Preset = preset === 'a4-21' ? 'a4-21' : 'a4-14';
+        openBaseSeparationModal();
+      }
+
       function openBaseSeparationModal() {
         const modal = document.getElementById('baseModal');
         const content = document.getElementById('baseModalContent');
         const printArea = document.getElementById('printableLabelsArea');
+        const presetSelect = document.getElementById('a4LabelPresetSelect');
         if (!modal || !content) return;
+
+        if (presetSelect) presetSelect.value = appState.a4Preset;
+        const isCompact21 = appState.a4Preset === 'a4-21';
+
+        if (printArea) {
+          printArea.className = isCompact21 ? 'hidden print-a4-21' : 'hidden print-a4-14';
+        }
 
         const byNeighborhood = new Map();
         appState.stops.forEach((stop) => {
@@ -1962,22 +2007,44 @@
                 </label>
               `;
 
-              printHtml += `
-                <div style="border: 2px solid ${color.hex}; border-left: 10px solid ${color.hex}; border-radius: 8px; overflow: hidden; font-family: Inter, sans-serif; page-break-inside: avoid; background-color: #ffffff;">
-                  <div style="background-color: ${color.hex}; color: #ffffff; padding: 5px 8px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 800; letter-spacing: 0.03em;">
-                    <span>PARADA #${stop.stopNumber}</span>
-                    <span>${escapeHtml(nb.toUpperCase())}</span>
-                  </div>
-                  <div style="padding: 7px 8px;">
-                    <div style="display: inline-block; background-color: ${color.bg}; color: ${color.text}; border: 1px solid ${color.border}; border-radius: 4px; padding: 1px 6px; font-size: 10px; font-weight: 800; margin-bottom: 4px;">
-                      ${escapeHtml(customBoxName)}
+              printHtml += isCompact21
+                ? `
+                  <div style="width: 63.5mm; height: 38.1mm; border: 1.5px solid ${color.hex}; border-left: 6px solid ${color.hex}; border-radius: 4px; overflow: hidden; font-family: Inter, sans-serif; page-break-inside: avoid; background-color: #ffffff; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div style="background-color: ${color.hex}; color: #ffffff; padding: 2px 5px; display: flex; justify-content: space-between; align-items: center; font-size: 9px; font-weight: 800;">
+                      <span>#${stop.stopNumber}</span>
+                      <span style="max-width: 42mm; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(nb.toUpperCase())}</span>
                     </div>
-                    <div style="font-size: 12px; font-weight: 800; color: #0f172a;">${escapeHtml(stop.address)}</div>
-                    <div style="font-size: 11px; color: #1e293b; margin-top: 2px;">Qtd no ponto: <strong>${stop.packages.length}</strong> • Final: <strong>${escapeHtml(last4)}</strong></div>
-                    <div style="font-size: 10px; font-family: monospace; color: #475569; margin-top: 2px;">${escapeHtml(pkg.code)}</div>
+                    <div style="padding: 3px 5px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                      <div style="font-size: 9.5px; font-weight: 800; color: #0f172a; line-height: 1.15; max-height: 22px; overflow: hidden;">${escapeHtml(stop.address)}</div>
+                      <div style="font-size: 9px; color: #1e293b; margin-top: 2px; display: flex; justify-content: space-between;">
+                        <span>Qtd: <strong>${stop.packages.length}</strong></span>
+                        <span>Final: <strong>#${escapeHtml(last4)}</strong></span>
+                      </div>
+                      <div style="font-size: 7.5px; font-family: monospace; color: #475569; margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(pkg.code)}</div>
+                    </div>
                   </div>
-                </div>
-              `;
+                `
+                : `
+                  <div style="width: 99mm; height: 38.1mm; border: 1.5px solid ${color.hex}; border-left: 8px solid ${color.hex}; border-radius: 5px; overflow: hidden; font-family: Inter, sans-serif; page-break-inside: avoid; background-color: #ffffff; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div style="background-color: ${color.hex}; color: #ffffff; padding: 3px 7px; display: flex; justify-content: space-between; align-items: center; font-size: 10px; font-weight: 800; letter-spacing: 0.02em;">
+                      <span>PARADA #${stop.stopNumber}</span>
+                      <span>${escapeHtml(nb.toUpperCase())}</span>
+                    </div>
+                    <div style="padding: 4px 7px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                      <div style="display: flex; align-items: center; justify-content: space-between; gap: 4px; margin-bottom: 2px;">
+                        <span style="display: inline-block; background-color: ${color.bg}; color: ${color.text}; border: 1px solid ${color.border}; border-radius: 3px; padding: 0px 5px; font-size: 8.5px; font-weight: 800; max-width: 66mm; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                          ${escapeHtml(customBoxName)}
+                        </span>
+                        <span style="font-size: 9.5px; font-weight: 800; color: #0f172a;">Final #${escapeHtml(last4)}</span>
+                      </div>
+                      <div style="font-size: 10.5px; font-weight: 800; color: #0f172a; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(stop.address)}</div>
+                      <div style="font-size: 8.5px; color: #334155; margin-top: 2px; display: flex; justify-content: space-between;">
+                        <span>Qtd no ponto: <strong>${stop.packages.length}</strong></span>
+                        <span style="font-family: monospace;">${escapeHtml(pkg.code)}</span>
+                      </div>
+                    </div>
+                  </div>
+                `;
             });
           });
 
@@ -2212,3 +2279,6 @@
         initMap();
         renderAll(true);
       });
+    </script>
+  </body>
+</html>
