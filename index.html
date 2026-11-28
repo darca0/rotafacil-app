@@ -331,6 +331,11 @@
       .gap-3 { gap: 12px; }
       .gap-4 { gap: 16px; }
 
+      /* Fallback de espaçamento para navegadores antigos (Android 8/9/10) que ignoram flex gap */
+      .flex > * + * { margin-left: 6px; }
+      .flex-col > * + * { margin-left: 0; margin-top: 8px; }
+      .divide-y > * + * { border-top: 1px solid #f1f5f9; }
+
       .p-2 { padding: 8px; }
       .p-3\.5 { padding: 14px; }
       .p-4 { padding: 16px; }
@@ -451,7 +456,10 @@
 
       #baseModal {
         position: fixed;
-        inset: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
         z-index: 50;
         background: rgba(2, 6, 23, 0.75);
         display: flex;
@@ -910,7 +918,8 @@
       let audioCtx = null;
 
       function escapeHtml(value) {
-        return String(value ?? '')
+        var str = value === null || value === undefined ? '' : String(value);
+        return str
           .replace(/&/g, '&amp;')
           .replace(/</g, '&lt;')
           .replace(/>/g, '&gt;')
@@ -953,7 +962,7 @@
         const key = normalizeText(neighborhood || 'Sem Bairro');
         let hash = 0;
         for (let i = 0; i < key.length; i++) {
-          hash = (hash * 31 + key.charCodeAt(i)) >>> 0;
+          hash = Math.abs((hash * 31 + key.charCodeAt(i)) | 0);
         }
         return NEIGHBORHOOD_PALETTE[hash % NEIGHBORHOOD_PALETTE.length];
       }
@@ -1053,7 +1062,7 @@
           appState.stops = buildStopsFromPackages(appState.rawPackages);
           if (!appState.activeStopId || appState.deliveredStopIds.includes(appState.activeStopId)) {
             const firstPending = appState.stops.find((s) => !appState.deliveredStopIds.includes(s.id));
-            appState.activeStopId = firstPending ? firstPending.id : appState.stops[0]?.id || null;
+            appState.activeStopId = firstPending ? firstPending.id : (appState.stops[0] ? appState.stops[0].id : null);
           }
           renderAll(true);
           showBanner('Sem coordenadas GPS na parada atual: paradas pendentes organizadas pela sequência.', 'warning');
@@ -1065,8 +1074,14 @@
 
         while (remaining.length > 0) {
           remaining.sort((a, b) => {
-            const da = haversineMeters(refLat, refLng, a.lat ?? refLat, a.lng ?? refLng) ?? Number.POSITIVE_INFINITY;
-            const db = haversineMeters(refLat, refLng, b.lat ?? refLat, b.lng ?? refLng) ?? Number.POSITIVE_INFINITY;
+            const aLat = typeof a.lat === 'number' ? a.lat : refLat;
+            const aLng = typeof a.lng === 'number' ? a.lng : refLng;
+            const bLat = typeof b.lat === 'number' ? b.lat : refLat;
+            const bLng = typeof b.lng === 'number' ? b.lng : refLng;
+            const distA = haversineMeters(refLat, refLng, aLat, aLng);
+            const distB = haversineMeters(refLat, refLng, bLat, bLng);
+            const da = distA !== null ? distA : Number.POSITIVE_INFINITY;
+            const db = distB !== null ? distB : Number.POSITIVE_INFINITY;
             if (da !== db) return da - db;
             return a.minSeq - b.minSeq;
           });
@@ -1085,7 +1100,7 @@
         }));
 
         appState.stops = merged;
-        appState.activeStopId = orderedPending[0]?.id || appState.stops[0]?.id || null;
+        appState.activeStopId = orderedPending[0] ? orderedPending[0].id : (appState.stops[0] ? appState.stops[0].id : null);
         renderAll(true);
         showBanner(
           `Rota dinâmica aplicada: ${orderedPending.length} paradas pendentes ordenadas por proximidade a partir da posição atual.`,
@@ -1097,10 +1112,11 @@
         appState.sortMode = mode;
         const prevActiveId = appState.activeStopId;
         appState.stops = buildStopsFromPackages(appState.rawPackages);
+        const firstPending = appState.stops.find((s) => !appState.deliveredStopIds.includes(s.id));
         appState.activeStopId =
           prevActiveId && appState.stops.some((s) => s.id === prevActiveId)
             ? prevActiveId
-            : appState.stops.find((s) => !appState.deliveredStopIds.includes(s.id))?.id || appState.stops[0]?.id || null;
+            : (firstPending ? firstPending.id : (appState.stops[0] ? appState.stops[0].id : null));
         renderAll(true);
       }
 
@@ -1766,7 +1782,7 @@
             const cells = splitCells(line);
             const obj = {};
             headers.forEach((h, i) => {
-              obj[h] = cells[i] ?? '';
+              obj[h] = cells[i] !== undefined ? cells[i] : '';
             });
             return obj;
           });
@@ -1823,7 +1839,7 @@
         appState.routeStartTime = Date.now();
         appState.selectedNeighborhood = 'ALL';
         appState.stops = buildStopsFromPackages(appState.rawPackages);
-        appState.activeStopId = appState.stops[0]?.id || null;
+        appState.activeStopId = appState.stops[0] ? appState.stops[0].id : null;
 
         renderAll(true);
         showBanner(
@@ -1840,7 +1856,7 @@
         appState.routeStartTime = Date.now();
         appState.selectedNeighborhood = 'ALL';
         appState.stops = buildStopsFromPackages(appState.rawPackages);
-        appState.activeStopId = appState.stops[0]?.id || null;
+        appState.activeStopId = appState.stops[0] ? appState.stops[0].id : null;
         renderAll(true);
         showBanner('Roteiro de teste (10 paradas — Vila Rezende & Jardim Witier) carregado!', 'success');
       }
@@ -2122,7 +2138,7 @@
         appState.routeStartTime = Date.now();
         appState.selectedNeighborhood = 'ALL';
         appState.stops = buildStopsFromPackages(appState.rawPackages);
-        appState.activeStopId = appState.stops[0]?.id || null;
+        appState.activeStopId = appState.stops[0] ? appState.stops[0].id : null;
         renderAll(true);
         showBanner('Progresso da rota resetado.', 'info');
       }
@@ -2192,10 +2208,7 @@
         setupCopyProtection();
         appState.rawPackages = RAW_SAMPLE_DATA.map((d) => ({ ...d }));
         appState.stops = buildStopsFromPackages(appState.rawPackages);
-        appState.activeStopId = appState.stops[0]?.id || null;
+        appState.activeStopId = appState.stops[0] ? appState.stops[0].id : null;
         initMap();
         renderAll(true);
       });
-    </script>
-  </body>
-</html>
